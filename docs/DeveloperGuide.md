@@ -261,71 +261,149 @@ _{Explain here how the data archiving feature will be implemented}_
 
 **Target user profile**:
 
-* has a need to manage a significant number of contacts
-* prefers desktop apps over other types of applications
-* can type fast
-* prefers typing to mouse interactions
-* is reasonably comfortable using CLI apps
+* is an independent private tutor;
+* teaches a small recurring group of secondary-school and junior-college students;
+* needs to manage student and guardian contact details together;
+* prefers a desktop application that stores data locally;
+* can type quickly and prefers commands for routine data entry; and
+* is reasonably comfortable using command-based applications.
 
-**Value proposition**: Manage contacts faster than with a typical mouse-driven GUI application.
+**Value proposition**: TutorConnect helps independent private tutors organize student and guardian contact details
+alongside essential tutoring context, so they can retrieve and update information quickly while managing a small
+recurring group of students.
 
 
 ### User stories
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …​                                    | I want to …​                     | So that I can…​                                                        |
-| -------- | ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------- |
-| `* * *`  | new user                                   | see usage instructions         | refer to instructions when I forget how to use the App                 |
-| `* * *`  | user                                       | add a new person               |                                                                        |
-| `* * *`  | user                                       | delete a person                | remove entries that I no longer need                                   |
-| `* * *`  | user                                       | find a person by name          | locate details of persons without having to go through the entire list |
-| `* *`    | user                                       | hide private contact details   | minimize chance of someone else seeing them by accident                |
-| `*`      | user with many persons in the address book | sort persons by name           | locate a person easily                                                 |
-
-*{More to be added}*
+| Priority | As a …​ | I want to …​ | So that I can…​ |
+| -------- | ------- | ------------- | ---------------- |
+| `* * *` | new user | view command instructions | start using TutorConnect without external help |
+| `* * *` | tutor | add a student with a name and phone number | keep the student's contact details |
+| `* * *` | tutor | add a guardian with a name and phone number | contact the student's guardian when needed |
+| `* * *` | tutor | link a guardian to a student | see the relationship between their records |
+| `* * *` | tutor | list all student and guardian records | review my tutoring contacts quickly |
+| `* * *` | tutor | delete an obsolete record | keep my contact list current |
+| `* * *` | tutor | have changes saved automatically | retain my records between sessions |
+| `* *` | tutor | edit a student's or guardian's contact details | correct changes without recreating the record |
+| `* *` | tutor | record a student's level and subjects | keep essential tutoring context with the student |
+| `* *` | tutor | search for a student or guardian by name | retrieve a specific record quickly |
+| `*` | tutor | sort records by name or type | scan a larger list more easily |
+| `*` | tutor | export contact information | keep a separate backup or use it in another tool |
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
+(For all use cases below, the **System** is `TutorConnect` and the **Actor** is the tutor.)
 
-**Use case: Delete a person**
+**Use case UC01: Add a student**
 
 **MSS**
 
-1.  User requests to list persons
-2.  AddressBook shows a list of persons
-3.  User requests to delete a specific person in the list
-4.  AddressBook deletes the person
+1. Tutor requests to add a student with a name and phone number.
+2. TutorConnect validates the supplied details.
+3. TutorConnect creates the student record with a unique ID.
+4. TutorConnect shows the created student and confirms the addition.
 
-    Use case ends.
+   Use case ends.
 
 **Extensions**
 
-* 2a. The list is empty.
+* 2a. A required detail is missing or invalid.
+  * 2a1. TutorConnect shows an error and the expected command format.
+  * 2a2. Use case ends.
+* 3a. A student with the same identifying details already exists.
+  * 3a1. TutorConnect informs the tutor that the student already exists.
+  * 3a2. Use case ends.
 
-  Use case ends.
+**Use case UC02: Link a guardian to a student**
 
-* 3a. The given index is invalid.
+**MSS**
 
-    * 3a1. AddressBook shows an error message.
+1. Tutor requests to list all records.
+2. TutorConnect displays students and guardians with their IDs.
+3. Tutor requests to link a specific guardian ID to a specific student ID.
+4. TutorConnect validates that both records exist.
+5. TutorConnect records the relationship and confirms the link.
 
-      Use case resumes at step 2.
+   Use case ends.
 
-*{More to be added}*
+**Extensions**
+
+* 2a. No records exist.
+  * 2a1. TutorConnect shows an empty list.
+  * 2a2. Use case ends.
+* 4a. The student ID or guardian ID does not exist.
+  * 4a1. TutorConnect identifies the invalid ID.
+  * 4a2. Use case resumes at step 2.
+* 4b. The guardian is already linked to the student.
+  * 4b1. TutorConnect informs the tutor that the link already exists.
+  * 4b2. Use case ends.
+
+**Use case UC03: Delete an obsolete record**
+
+**MSS**
+
+1. Tutor requests to list all records.
+2. TutorConnect displays students and guardians with their IDs.
+3. Tutor requests to delete a specific record by ID.
+4. TutorConnect deletes the record and confirms the deletion.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. No records exist.
+  * 2a1. TutorConnect shows an empty list.
+  * 2a2. Use case ends.
+* 3a. The supplied ID is invalid or does not exist.
+  * 3a1. TutorConnect shows an error identifying the invalid ID.
+  * 3a2. Use case resumes at step 2.
+* 4a. The record is linked to another record.
+  * 4a1. TutorConnect removes the relationship as part of the deletion.
+  * 4a2. Use case continues at step 4.
+
+**Use case UC04: Retrieve a contact**
+
+**MSS**
+
+1. Tutor requests to list all records.
+2. TutorConnect displays the stored students and guardians with their contact details.
+3. Tutor reads the required contact details.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. No records exist.
+  * 2a1. TutorConnect shows an empty list.
+  * 2a2. Use case ends.
 
 ### Non-Functional Requirements
 
-1.  Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
-2.  Should be able to hold up to 1000 persons without noticeable sluggishness in performance for typical usage.
-3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-
-*{More to be added}*
+1. TutorConnect should work on any _mainstream OS_ with Java `25` or later installed.
+2. TutorConnect should respond to commands within one second for up to 1,000 combined student and guardian records,
+   excluding delays caused by the operating system or storage hardware.
+3. TutorConnect should persist every successful data-changing command to local storage without requiring a separate
+   save command.
+4. TutorConnect should recover gracefully from a missing data file by creating a new empty data set.
+5. TutorConnect should not require an Internet connection for its core contact-management features.
+6. A tutor who types faster than average should be able to perform routine contact-management tasks using the keyboard
+   alone.
+7. A new user familiar with command-line interfaces should be able to learn the core commands using the built-in help
+   information without external documentation.
+8. TutorConnect should store contact data only on the user's computer unless the user explicitly exports it.
 
 ### Glossary
 
-* **Mainstream OS**: Windows, Linux, Unix, or macOS
-* **Private contact detail**: A contact detail that is not meant to be shared with others
+* **Guardian**: A parent or other responsible adult associated with a student and whom the tutor may need to contact.
+* **Guardian ID**: A unique identifier assigned by TutorConnect to a guardian record.
+* **Mainstream OS**: Windows, Linux, Unix, or macOS.
+* **Record**: A stored student or guardian entry.
+* **Student**: A secondary-school or junior-college learner taught by the tutor.
+* **Student ID**: A unique identifier assigned by TutorConnect to a student record.
+* **Tutor**: The independent private tutor who uses TutorConnect.
+* **Tutoring context**: Information needed to support tutoring, such as a student's education level and subjects.
 
 --------------------------------------------------------------------------------------------------------------------
 
