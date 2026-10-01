@@ -28,14 +28,14 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Role: Developer
 * Responsibilities: Code quality + Testing
 
-### Johnny Doe
+### Jeryl Chwa
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/jerylchwa.png" width="200px">
 
-[[github](http://github.com/johndoe)] [[portfolio](team/johndoe.md)]
+[[github](https://github.com/JerylChwa)]
 
 * Role: Developer
-* Responsibilities: Data
+* Responsibilities: UI
 
 ### Jean Doe
 
