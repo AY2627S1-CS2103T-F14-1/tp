@@ -20,6 +20,41 @@ repositories {
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
 }
 
+configurations {
+    // Holds every platform's JavaFX native-library jars, for shadowJar to bundle
+    // into the release JAR. Kept off the normal runtime classpath on purpose --
+    // see the comment below.
+    crossPlatformJavaFx
+}
+
+// JavaFX ships one native-library JAR per OS/architecture, and at startup it
+// extracts the natives it finds first on the classpath into ~/.openjfx/cache.
+// If several platforms' JARs are on that classpath at once, it can extract the
+// wrong architecture and then fail with "No toolkit found" -- which is exactly
+// what happens on Apple Silicon Macs, where the x86_64 "mac" JAR shadows the
+// "mac-aarch64" one. So compiling, testing and ./gradlew run use only the
+// classifier matching the machine doing the build.
+// The shadowJar release artifact is different: it gets handed to graders and
+// teammates on unknown machines, so it still bundles several platforms, drawn
+// from the separate configuration above rather than the runtime classpath.
+String osName = System.getProperty('os.name').toLowerCase()
+String osArch = System.getProperty('os.arch').toLowerCase()
+String localJavaFxClassifier
+if (osName.contains('win')) {
+    localJavaFxClassifier = 'win'
+} else if (osName.contains('mac')) {
+    localJavaFxClassifier = osArch.contains('aarch64') ? 'mac-aarch64' : 'mac'
+} else {
+    localJavaFxClassifier = osArch.contains('aarch64') ? 'linux-aarch64' : 'linux'
+}
+// NOTE: deliberately the same three classifiers master already bundled, so this
+// change does not alter the release JAR at all. More cannot simply be added:
+// inside a shadow JAR the natives live at a flat path, so "mac" and
+// "mac-aarch64" both contribute libprism_es2.dylib and one silently overwrites
+// the other (likewise "linux" vs "linux-aarch64"). Making the JAR genuinely
+// universal needs a different packaging approach, not another classifier here.
+List<String> allJavaFxClassifiers = ['win', 'mac', 'linux']
+
 checkstyle {
     toolVersion = '14.1.0'
 }
@@ -49,18 +84,19 @@ dependencies {
     String jUnitVersion = '5.14.4'
     String javaFxVersion = '17.0.7'
 
-    implementation "org.openjfx:javafx-base:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-base:${javaFxVersion}:mac"
-    implementation "org.openjfx:javafx-base:${javaFxVersion}:linux"
-    implementation "org.openjfx:javafx-controls:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-controls:${javaFxVersion}:mac"
-    implementation "org.openjfx:javafx-controls:${javaFxVersion}:linux"
-    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:mac"
-    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:linux"
-    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:mac"
-    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:linux"
+    List<String> javaFxModules = ['base', 'controls', 'fxml', 'graphics']
+
+    // Compiling, testing and ./gradlew run need this machine's classifier only.
+    for (String module : javaFxModules) {
+        implementation "org.openjfx:javafx-${module}:${javaFxVersion}:${localJavaFxClassifier}"
+    }
+    // The shadowJar release build bundles several platforms; see the shadowJar
+    // task below, which reads this configuration as well.
+    for (String classifier : allJavaFxClassifiers) {
+        for (String module : javaFxModules) {
+            crossPlatformJavaFx "org.openjfx:javafx-${module}:${javaFxVersion}:${classifier}"
+        }
+    }
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.7.0'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.4'
@@ -73,6 +109,7 @@ dependencies {
 
 shadowJar {
     archiveFileName = 'addressbook.jar'
+    configurations = [project.configurations.runtimeClasspath, project.configurations.crossPlatformJavaFx]
 }
 
 defaultTasks 'clean', 'test'
