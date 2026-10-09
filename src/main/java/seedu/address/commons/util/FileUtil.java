@@ -1,7 +1,6 @@
 package seedu.address.commons.util;
 
 import java.io.IOException;
-import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -56,11 +55,7 @@ public class FileUtil {
         Path tempFile = Files.createTempFile(directory, file.getFileName().toString(), ".tmp");
         try {
             Files.write(tempFile, content.getBytes(CHARSET));
-            try {
-                Files.move(tempFile, file, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
-            } catch (AtomicMoveNotSupportedException e) {
-                Files.move(tempFile, file, StandardCopyOption.REPLACE_EXISTING);
-            }
+            Files.move(tempFile, file, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
         } finally {
             Files.deleteIfExists(tempFile);
         }
