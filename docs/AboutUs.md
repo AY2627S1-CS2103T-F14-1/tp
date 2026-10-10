@@ -45,3 +45,12 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Role: Developer
 * Responsibilities: Logic + Storage
 
+### Gerald
+
+<img src="images/fatdino789.png" width="200px">
+
+[[github](https://github.com/FatDino789)]
+
+* Role: Developer
+* Responsibilities: Model
+
