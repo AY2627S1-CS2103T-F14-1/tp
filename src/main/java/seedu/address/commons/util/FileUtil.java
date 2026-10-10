@@ -3,6 +3,7 @@ package seedu.address.commons.util;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Writes and reads files
@@ -46,9 +47,18 @@ public class FileUtil {
     /**
      * Writes given string to a file.
      * Will create the file if it does not exist yet.
+     * The content is first written to a temporary file in the same directory, which then replaces {@code file}.
+     * If writing fails, the existing content of {@code file} is left untouched.
      */
     public static void writeToFile(Path file, String content) throws IOException {
-        Files.write(file, content.getBytes(CHARSET));
+        Path directory = file.toAbsolutePath().getParent();
+        Path tempFile = Files.createTempFile(directory, file.getFileName().toString(), ".tmp");
+        try {
+            Files.write(tempFile, content.getBytes(CHARSET));
+            Files.move(tempFile, file, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+        } finally {
+            Files.deleteIfExists(tempFile);
+        }
     }
 
 }
