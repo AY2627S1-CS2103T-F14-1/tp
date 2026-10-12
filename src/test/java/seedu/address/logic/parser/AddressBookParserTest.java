@@ -13,13 +13,17 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddCommand;
+import seedu.address.logic.commands.AddGuardianCommand;
+import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteCommand;
+import seedu.address.logic.commands.DeleteContactCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
+import seedu.address.logic.commands.LinkCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
@@ -37,6 +41,21 @@ public class AddressBookParserTest {
         Person person = new PersonBuilder().build();
         AddCommand command = (AddCommand) parser.parseCommand(PersonUtil.getAddCommand(person));
         assertEquals(new AddCommand(person), command);
+    }
+
+    @Test
+    public void parseCommand_tutorConnectCommands() throws Exception {
+        assertTrue(parser.parseCommand("add-student n/Alex Tan p/91234567") instanceof AddStudentCommand);
+        assertTrue(parser.parseCommand("add-guardian n/Amelia Tan p/92345678") instanceof AddGuardianCommand);
+        assertTrue(parser.parseCommand("link s/S1 g/G1") instanceof LinkCommand);
+        assertTrue(parser.parseCommand("delete S1") instanceof DeleteContactCommand);
+    }
+
+    @Test
+    public void parseCommand_invalidTutorConnectCommands_throwsParseException() {
+        assertThrows(ParseException.class, () -> parser.parseCommand("add-student n/Alex Tan"));
+        assertThrows(ParseException.class, () -> parser.parseCommand("add-guardian p/92345678"));
+        assertThrows(ParseException.class, () -> parser.parseCommand("link s/G1 g/S1"));
     }
 
     @Test
