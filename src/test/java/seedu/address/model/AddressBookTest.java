@@ -101,6 +101,21 @@ public class AddressBookTest {
         public ObservableList<Person> getPersonList() {
             return persons;
         }
+
+        @Override
+        public java.util.List<seedu.address.model.link.GuardianLink> getGuardianLinks() {
+            return java.util.List.of();
+        }
+
+        @Override
+        public int getNextStudentNumber() {
+            return 1;
+        }
+
+        @Override
+        public int getNextGuardianNumber() {
+            return 1;
+        }
     }
 
 }

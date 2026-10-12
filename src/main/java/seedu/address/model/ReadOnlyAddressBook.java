@@ -18,18 +18,12 @@ public interface ReadOnlyAddressBook {
     ObservableList<Person> getPersonList();
 
     /** Returns the recorded guardian-student relationships. */
-    default List<GuardianLink> getGuardianLinks() {
-        return List.of();
-    }
+    List<GuardianLink> getGuardianLinks();
 
     /** Returns the next student number to allocate. */
-    default int getNextStudentNumber() {
-        return 1;
-    }
+    int getNextStudentNumber();
 
     /** Returns the next guardian number to allocate. */
-    default int getNextGuardianNumber() {
-        return 1;
-    }
+    int getNextGuardianNumber();
 
 }

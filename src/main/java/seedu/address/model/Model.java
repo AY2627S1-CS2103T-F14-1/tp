@@ -58,34 +58,22 @@ public interface Model {
     void addPerson(Person person);
 
     /** Allocates the next student ID. */
-    default StudentId allocateStudentId() {
-        throw new UnsupportedOperationException();
-    }
+    StudentId allocateStudentId();
 
     /** Allocates the next guardian ID. */
-    default GuardianId allocateGuardianId() {
-        throw new UnsupportedOperationException();
-    }
+    GuardianId allocateGuardianId();
 
     /** Returns whether a TutorConnect contact with the given ID exists. */
-    default boolean hasContact(String contactId) {
-        throw new UnsupportedOperationException();
-    }
+    boolean hasContact(String contactId);
 
     /** Records a guardian-student relationship. */
-    default void addGuardianLink(GuardianLink link) {
-        throw new UnsupportedOperationException();
-    }
+    void addGuardianLink(GuardianLink link);
 
     /** Deletes a TutorConnect contact by ID and removes its relationships. */
-    default boolean deleteContact(String contactId) {
-        throw new UnsupportedOperationException();
-    }
+    boolean deleteContact(String contactId);
 
     /** Returns the current guardian-student relationships. */
-    default List<GuardianLink> getGuardianLinks() {
-        return List.of();
-    }
+    List<GuardianLink> getGuardianLinks();
 
     /**
      * Replaces the given person {@code target} with {@code editedPerson}.

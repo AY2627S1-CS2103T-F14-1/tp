@@ -108,6 +108,36 @@ public class AddCommandTest {
         }
 
         @Override
+        public seedu.address.model.student.StudentId allocateStudentId() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public seedu.address.model.guardian.GuardianId allocateGuardianId() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public boolean hasContact(String contactId) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void addGuardianLink(seedu.address.model.link.GuardianLink link) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public boolean deleteContact(String contactId) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public java.util.List<seedu.address.model.link.GuardianLink> getGuardianLinks() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public void setAddressBook(ReadOnlyAddressBook newData) {
             throw new AssertionError("This method should not be called.");
         }
