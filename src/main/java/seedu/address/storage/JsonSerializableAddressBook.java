@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
+import seedu.address.model.link.GuardianLink;
 import seedu.address.model.person.Person;
 
 /**
@@ -22,13 +23,24 @@ class JsonSerializableAddressBook {
     public static final String MESSAGE_DUPLICATE_PERSON = "Persons list contains duplicate person(s).";
 
     private final List<JsonAdaptedPerson> persons = new ArrayList<>();
+    private final List<JsonAdaptedGuardianLink> guardianLinks = new ArrayList<>();
+    private final int nextStudentNumber;
+    private final int nextGuardianNumber;
 
     /**
      * Constructs a {@code JsonSerializableAddressBook} with the given persons.
      */
     @JsonCreator
-    public JsonSerializableAddressBook(@JsonProperty("persons") List<JsonAdaptedPerson> persons) {
+    public JsonSerializableAddressBook(@JsonProperty("persons") List<JsonAdaptedPerson> persons,
+            @JsonProperty("guardianLinks") List<JsonAdaptedGuardianLink> guardianLinks,
+            @JsonProperty("nextStudentNumber") Integer nextStudentNumber,
+            @JsonProperty("nextGuardianNumber") Integer nextGuardianNumber) {
         this.persons.addAll(persons);
+        if (guardianLinks != null) {
+            this.guardianLinks.addAll(guardianLinks);
+        }
+        this.nextStudentNumber = nextStudentNumber == null ? 1 : nextStudentNumber;
+        this.nextGuardianNumber = nextGuardianNumber == null ? 1 : nextGuardianNumber;
     }
 
     /**
@@ -38,6 +50,10 @@ class JsonSerializableAddressBook {
      */
     public JsonSerializableAddressBook(ReadOnlyAddressBook source) {
         persons.addAll(source.getPersonList().stream().map(JsonAdaptedPerson::new).collect(Collectors.toList()));
+        guardianLinks.addAll(source.getGuardianLinks().stream()
+                .map(JsonAdaptedGuardianLink::new).collect(Collectors.toList()));
+        nextStudentNumber = source.getNextStudentNumber();
+        nextGuardianNumber = source.getNextGuardianNumber();
     }
 
     /**
@@ -54,6 +70,11 @@ class JsonSerializableAddressBook {
             }
             addressBook.addPerson(person);
         }
+        List<GuardianLink> links = new ArrayList<>();
+        for (JsonAdaptedGuardianLink jsonLink : guardianLinks) {
+            links.add(jsonLink.toModelType());
+        }
+        addressBook.restoreTutorConnectData(links, nextStudentNumber, nextGuardianNumber);
         return addressBook;
     }
 

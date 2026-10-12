@@ -1,10 +1,14 @@
 package seedu.address.model;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
+import seedu.address.model.guardian.GuardianId;
+import seedu.address.model.link.GuardianLink;
 import seedu.address.model.person.Person;
+import seedu.address.model.student.StudentId;
 
 /**
  * The API of the Model component.
@@ -52,6 +56,36 @@ public interface Model {
      * {@code person} must not already exist in the address book.
      */
     void addPerson(Person person);
+
+    /** Allocates the next student ID. */
+    default StudentId allocateStudentId() {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Allocates the next guardian ID. */
+    default GuardianId allocateGuardianId() {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Returns whether a TutorConnect contact with the given ID exists. */
+    default boolean hasContact(String contactId) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Records a guardian-student relationship. */
+    default void addGuardianLink(GuardianLink link) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Deletes a TutorConnect contact by ID and removes its relationships. */
+    default boolean deleteContact(String contactId) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Returns the current guardian-student relationships. */
+    default List<GuardianLink> getGuardianLinks() {
+        return List.of();
+    }
 
     /**
      * Replaces the given person {@code target} with {@code editedPerson}.

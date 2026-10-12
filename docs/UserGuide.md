@@ -3,7 +3,7 @@ layout: page
 title: User Guide
 ---
 
-AddressBook Level 3 (AB3) is a **desktop application for managing contacts, optimized for use through a Command Line Interface (CLI)** while retaining the benefits of a Graphical User Interface (GUI). If you type quickly, AB3 can help you manage contacts faster than traditional GUI applications.
+TutorConnect is a **desktop application for tutors to manage student and guardian contacts**, optimized for use through a Command Line Interface (CLI) while retaining the benefits of a Graphical User Interface (GUI).
 
 * Table of Contents
 {:toc}
@@ -73,6 +73,30 @@ Shows a message explaining how to access the help page.
 Format: `help`
 
 
+### Adding a student: `add-student`
+
+Adds a student and assigns the next permanent student ID (`S1`, `S2`, …).
+
+Format: `add-student n/NAME p/PHONE_NUMBER`
+
+Example: `add-student n/Alex Tan p/91234567`
+
+### Adding a guardian: `add-guardian`
+
+Adds a guardian and assigns the next permanent guardian ID (`G1`, `G2`, …).
+
+Format: `add-guardian n/NAME p/PHONE_NUMBER`
+
+Example: `add-guardian n/Amelia Tan p/92345678`
+
+### Linking a guardian to a student: `link`
+
+Links existing contacts using their IDs. A guardian can be linked to more than one student.
+
+Format: `link s/STUDENT_ID g/GUARDIAN_ID`
+
+Example: `link s/S1 g/G1`
+
 ### Adding a person: `add`
 
 Adds a person to the address book.
@@ -87,9 +111,9 @@ Examples:
 * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
 * `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 
-### Listing all persons: `list`
+### Listing contacts: `list`
 
-Shows a list of all persons in the address book.
+Shows all contacts. The command result also lists recorded guardian-to-student relationships.
 
 Format: `list`
 
@@ -126,11 +150,15 @@ Examples:
 * `find alex david` returns `Alex Yeoh`, `David Li`<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
 
-### Deleting a person: `delete`
+### Deleting a contact: `delete`
 
 Deletes the specified person from the address book.
 
-Format: `delete INDEX`
+Format: `delete ID` or `delete INDEX`
+
+* `delete S1` deletes student `S1`; `delete G1` deletes guardian `G1`.
+  Any guardian-student relationships involving that contact are removed automatically.
+* Contact IDs are never reused.
 
 * Deletes the person at the specified `INDEX`.
 * The index refers to the index number shown in the displayed person list.
