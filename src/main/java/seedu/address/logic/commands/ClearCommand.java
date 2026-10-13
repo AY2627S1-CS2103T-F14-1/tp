@@ -2,11 +2,15 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
+
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
+import seedu.address.model.ReadOnlyAddressBook;
 
 /**
  * Clears the address book.
+ * Student and guardian ID counters are kept so that IDs are never reused.
  */
 public class ClearCommand extends Command {
 
@@ -17,7 +21,11 @@ public class ClearCommand extends Command {
     @Override
     public CommandResult execute(Model model) {
         requireNonNull(model);
-        model.setAddressBook(new AddressBook());
+        ReadOnlyAddressBook current = model.getAddressBook();
+        AddressBook cleared = new AddressBook();
+        cleared.restoreTutorConnectData(List.of(), current.getNextStudentNumber(),
+                current.getNextGuardianNumber());
+        model.setAddressBook(cleared);
         return new CommandResult(MESSAGE_SUCCESS);
     }
 }
