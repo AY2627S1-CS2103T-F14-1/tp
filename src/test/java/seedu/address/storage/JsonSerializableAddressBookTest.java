@@ -93,6 +93,42 @@ public class JsonSerializableAddressBookTest {
                 dataFromFile::toModelType);
     }
 
+    @Test
+    public void toModelType_multipleIdsOnPerson_throwsIllegalValueException() throws Exception {
+        JsonSerializableAddressBook dataFromFile = readTutorConnectData("""
+                [{"name":"Alex Tan","phone":"91234567","email":"a@example.com","address":"One","tags":["S1","G1"]}]
+                """, "[]", 2, 2);
+
+        assertThrows(IllegalValueException.class, JsonSerializableAddressBook.MESSAGE_INVALID_CONTACT_ID,
+                dataFromFile::toModelType);
+    }
+
+    @Test
+    public void toModelType_invalidNextId_throwsIllegalValueException() throws Exception {
+        JsonSerializableAddressBook dataFromFile = readTutorConnectData(TUTOR_CONNECT_PERSONS,
+                """
+                [{"studentId":"S1","guardianId":"G1"}]
+                """, 2, 0);
+
+        assertThrows(IllegalValueException.class, JsonSerializableAddressBook.MESSAGE_INVALID_NEXT_ID,
+                dataFromFile::toModelType);
+    }
+
+    @Test
+    public void toModelType_validTutorConnectData_returnsAddressBook() throws Exception {
+        JsonSerializableAddressBook dataFromFile = readTutorConnectData(TUTOR_CONNECT_PERSONS,
+                """
+                [{"studentId":"S1","guardianId":"G1"}]
+                """, 2, 2);
+
+        AddressBook addressBook = dataFromFile.toModelType();
+
+        assertEquals(2, addressBook.getPersonList().size());
+        assertEquals(1, addressBook.getGuardianLinks().size());
+        assertEquals(2, addressBook.getNextStudentNumber());
+        assertEquals(2, addressBook.getNextGuardianNumber());
+    }
+
     private JsonSerializableAddressBook readTutorConnectData(String persons, String links, int nextStudentNumber,
             int nextGuardianNumber) throws Exception {
         String json = "{\"persons\":" + persons + ",\"guardianLinks\":" + links
