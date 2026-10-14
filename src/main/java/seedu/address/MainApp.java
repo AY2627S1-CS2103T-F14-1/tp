@@ -71,9 +71,10 @@ public class MainApp extends Application {
         try {
             addressBookOptional = storage.readAddressBook();
             if (addressBookOptional.isEmpty()) {
-                logger.info("Creating a new empty TutorConnect data file " + storage.getAddressBookFilePath());
+                logger.info("Creating a new data file " + storage.getAddressBookFilePath()
+                        + " populated with a sample AddressBook.");
             }
-            initialData = addressBookOptional.orElseGet(AddressBook::new);
+            initialData = getInitialData(addressBookOptional);
         } catch (DataLoadingException e) {
             logger.warning("Data file at " + storage.getAddressBookFilePath() + " could not be loaded."
                     + " Will be starting with an empty AddressBook.");
@@ -81,6 +82,11 @@ public class MainApp extends Application {
         }
 
         return new ModelManager(initialData, userPrefs);
+    }
+
+    /** Returns saved data when available, otherwise an empty TutorConnect workspace. */
+    static ReadOnlyAddressBook getInitialData(Optional<ReadOnlyAddressBook> addressBookOptional) {
+        return addressBookOptional.orElseGet(AddressBook::new);
     }
 
     /**
@@ -117,7 +123,7 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        logger.info("Starting TutorConnect " + MainApp.VERSION);
+        logger.info("Starting AddressBook " + MainApp.VERSION);
         ui.start(primaryStage);
     }
 
