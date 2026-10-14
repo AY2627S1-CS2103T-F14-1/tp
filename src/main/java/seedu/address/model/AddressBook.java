@@ -9,12 +9,15 @@ import javafx.collections.ObservableList;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.guardian.GuardianId;
 import seedu.address.model.link.GuardianLink;
+import seedu.address.model.person.ContactOrder;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.UniquePersonList;
 import seedu.address.model.student.StudentId;
 
 /**
  * Wraps all data at the address-book level.
+ * Persons are kept in {@link ContactOrder} order: students, then guardians, each by ID number,
+ * then contacts without an ID in the order they were added.
  * Duplicates are not allowed (by .isSamePerson comparison).
  */
 public class AddressBook implements ReadOnlyAddressBook {
@@ -42,6 +45,7 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void setPersons(List<Person> persons) {
         this.persons.setPersons(persons);
+        this.persons.sort(ContactOrder.COMPARATOR);
     }
 
     /**
@@ -73,6 +77,7 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void addPerson(Person p) {
         persons.add(p);
+        persons.sort(ContactOrder.COMPARATOR);
     }
 
     /**
@@ -84,6 +89,7 @@ public class AddressBook implements ReadOnlyAddressBook {
         requireNonNull(editedPerson);
 
         persons.setPerson(target, editedPerson);
+        persons.sort(ContactOrder.COMPARATOR);
     }
 
     /**

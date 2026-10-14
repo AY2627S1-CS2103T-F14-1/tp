@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.Person;
 import seedu.address.testutil.AddressBookBuilder;
+import seedu.address.testutil.PersonBuilder;
 
 public class ModelManagerTest {
 
@@ -71,6 +73,16 @@ public class ModelManagerTest {
     @Test
     public void getFilteredPersonList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> modelManager.getFilteredPersonList().remove(0));
+    }
+
+    @Test
+    public void getFilteredPersonList_contactsAddedOutOfOrder_sortedByContactId() {
+        Person guardian = new PersonBuilder().withName("Amelia Tan").withTags("guardian", "G1").build();
+        Person student = new PersonBuilder().withName("Alex Tan").withTags("student", "S1").build();
+        modelManager.addPerson(ALICE);
+        modelManager.addPerson(guardian);
+        modelManager.addPerson(student);
+        assertEquals(List.of(student, guardian, ALICE), modelManager.getFilteredPersonList());
     }
 
     @Test

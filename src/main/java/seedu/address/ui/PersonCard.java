@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import seedu.address.model.person.ContactOrder;
 import seedu.address.model.person.Person;
 
 /**
@@ -47,11 +48,7 @@ public class PersonCard extends UiPart<Region> {
     public PersonCard(Person person, int displayedIndex) {
         super(FXML);
         this.person = person;
-        String contactId = person.getTags().stream()
-                .map(tag -> tag.tagName)
-                .filter(tag -> tag.matches("[SG][1-9][0-9]*"))
-                .findFirst()
-                .orElse(String.valueOf(displayedIndex));
+        String contactId = ContactOrder.getContactId(person).orElse(String.valueOf(displayedIndex));
         id.setText(contactId + ". ");
         name.setText(person.getName().fullName);
         phone.setText(person.getPhone().value);

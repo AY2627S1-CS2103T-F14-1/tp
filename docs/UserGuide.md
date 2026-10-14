@@ -113,9 +113,24 @@ Examples:
 
 ### Listing contacts: `list`
 
-Shows all contacts. The command result also lists recorded guardian-to-student relationships.
+Shows all contacts, clearing any filter from a previous `find`. The result box lists every student and guardian with their ID, name, phone number, and linked contacts.
 
 Format: `list`
+
+* Students are shown first, then guardians, each in ID order (`S2` comes before `S10`).
+* Each student line shows their linked guardians, and each guardian line shows their linked students. `none` means no links have been recorded yet.
+* If there are no students or guardians, TutorConnect shows `No students or guardians yet.`
+
+Example: after adding students `S1` and `S2` and guardian `G1`, then running `link s/S1 g/G1` and `link s/S2 g/G1`, `list` shows:
+
+```
+Listed 2 students and 1 guardian.
+Students:
+S1 Alex Tan, 91234567 (guardians: G1)
+S2 Ben Lim, 93456789 (guardians: G1)
+Guardians:
+G1 Amelia Tan, 92345678 (students: S1, S2)
+```
 
 ### Editing a person: `edit`
 
