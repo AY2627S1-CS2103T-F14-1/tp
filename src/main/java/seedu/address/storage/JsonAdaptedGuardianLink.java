@@ -26,7 +26,8 @@ class JsonAdaptedGuardianLink {
     }
 
     GuardianLink toModelType() throws IllegalValueException {
-        if (!StudentId.isValidStudentId(studentId) || !GuardianId.isValidGuardianId(guardianId)) {
+        if (studentId == null || guardianId == null
+                || !StudentId.isValidStudentId(studentId) || !GuardianId.isValidGuardianId(guardianId)) {
             throw new IllegalValueException("Guardian link contains an invalid contact ID.");
         }
         return new GuardianLink(new StudentId(studentId), new GuardianId(guardianId));

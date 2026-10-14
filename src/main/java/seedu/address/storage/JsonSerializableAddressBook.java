@@ -1,7 +1,9 @@
 package seedu.address.storage;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -11,8 +13,10 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
+import seedu.address.model.guardian.GuardianId;
 import seedu.address.model.link.GuardianLink;
 import seedu.address.model.person.Person;
+import seedu.address.model.student.StudentId;
 
 /**
  * An Immutable AddressBook that is serializable to JSON format.
@@ -21,6 +25,11 @@ import seedu.address.model.person.Person;
 class JsonSerializableAddressBook {
 
     public static final String MESSAGE_DUPLICATE_PERSON = "Persons list contains duplicate person(s).";
+    public static final String MESSAGE_DUPLICATE_CONTACT_ID = "Persons list contains duplicate contact ID(s).";
+    public static final String MESSAGE_INVALID_CONTACT_ID = "A person has more than one TutorConnect contact ID.";
+    public static final String MESSAGE_DUPLICATE_LINK = "Guardian links contain duplicate link(s).";
+    public static final String MESSAGE_DANGLING_LINK = "Guardian link refers to a missing contact.";
+    public static final String MESSAGE_INVALID_NEXT_ID = "The next contact ID must be greater than all saved IDs.";
 
     private final List<JsonAdaptedPerson> persons = new ArrayList<>();
     private final List<JsonAdaptedGuardianLink> guardianLinks = new ArrayList<>();
@@ -74,8 +83,62 @@ class JsonSerializableAddressBook {
         for (JsonAdaptedGuardianLink jsonLink : guardianLinks) {
             links.add(jsonLink.toModelType());
         }
+        validateTutorConnectData(addressBook.getPersonList(), links);
         addressBook.restoreTutorConnectData(links, nextStudentNumber, nextGuardianNumber);
         return addressBook;
+    }
+
+    /**
+     * Validates saved TutorConnect IDs, relationships, and allocation counters before loading them.
+     */
+    private void validateTutorConnectData(List<Person> persons, List<GuardianLink> links)
+            throws IllegalValueException {
+        Set<String> studentIds = new HashSet<>();
+        Set<String> guardianIds = new HashSet<>();
+        for (Person person : persons) {
+            List<String> contactIds = person.getTags().stream()
+                    .map(tag -> tag.tagName)
+                    .filter(tagName -> StudentId.isValidStudentId(tagName)
+                            || GuardianId.isValidGuardianId(tagName))
+                    .toList();
+            if (contactIds.size() > 1) {
+                throw new IllegalValueException(MESSAGE_INVALID_CONTACT_ID);
+            }
+            if (contactIds.isEmpty()) {
+                continue;
+            }
+            String contactId = contactIds.get(0);
+            Set<String> contactIdsForRole = StudentId.isValidStudentId(contactId) ? studentIds : guardianIds;
+            if (!contactIdsForRole.add(contactId)) {
+                throw new IllegalValueException(MESSAGE_DUPLICATE_CONTACT_ID);
+            }
+        }
+        if (new HashSet<>(links).size() != links.size()) {
+            throw new IllegalValueException(MESSAGE_DUPLICATE_LINK);
+        }
+        if (links.stream().anyMatch(link -> !studentIds.contains(link.getStudentId().toString())
+                || !guardianIds.contains(link.getGuardianId().toString()))) {
+            throw new IllegalValueException(MESSAGE_DANGLING_LINK);
+        }
+        if (!isNextIdValid(nextStudentNumber, studentIds) || !isNextIdValid(nextGuardianNumber, guardianIds)) {
+            throw new IllegalValueException(MESSAGE_INVALID_NEXT_ID);
+        }
+    }
+
+    /** Returns whether {@code nextNumber} is usable and greater than every ID number in {@code contactIds}. */
+    private boolean isNextIdValid(int nextNumber, Set<String> contactIds) {
+        if (nextNumber < 1) {
+            return false;
+        }
+        String nextNumberText = String.valueOf(nextNumber);
+        return contactIds.stream()
+                .noneMatch(contactId -> compareIdNumbers(contactId.substring(1), nextNumberText) >= 0);
+    }
+
+    /** Compares two positive ID-number strings without overflowing an {@code int}. */
+    private int compareIdNumbers(String first, String second) {
+        int lengthComparison = Integer.compare(first.length(), second.length());
+        return lengthComparison != 0 ? lengthComparison : first.compareTo(second);
     }
 
 }
