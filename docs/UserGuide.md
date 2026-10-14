@@ -19,20 +19,19 @@ TutorConnect is a **desktop application for tutors to manage student and guardia
 
 1. Copy the file to the folder you want to use as the _home folder_ for TutorConnect.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar addressbook.jar`.<br>
-   A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data.<br>
-   ![Ui](images/Ui.png)
+1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar TutorConnect-v1.3.jar`.<br>
+   A TutorConnect window should appear in a few seconds with an empty contact list.
 
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
 
-   * `list` : Lists all contacts.
+   * `add-student n/Alex Tan p/91234567` : Adds student `S1`.
 
-   * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds a contact named `John Doe`.
+   * `add-guardian n/Amelia Tan p/92345678` : Adds guardian `G1`.
 
-   * `delete 3` : Deletes the 3rd contact shown in the current list.
+   * `link s/S1 g/G1` : Records that guardian `G1` is linked to student `S1`.
 
-   * `clear` : Deletes all contacts.
+   * `list` : Lists TutorConnect contacts and their relationships.
 
    * `exit` : Exits the app.
 
@@ -197,15 +196,16 @@ Format: `exit`
 
 ### Saving the data
 
-AddressBook automatically saves data after every command. You do not need to save manually.
+TutorConnect automatically saves data after every command. You do not need to save manually.
 
 ### Editing the data file
 
-AddressBook data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+TutorConnect data is saved automatically as a JSON file `[JAR file location]/data/tutorconnect.json`.
+Advanced users are welcome to update data directly by editing that data file.
 
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
-If your changes make the data file invalid, AddressBook starts with an empty address book at the next run. The invalid file remains on disk until you run a command (AddressBook saves after every command). Still, we recommend backing up the file before editing it.<br>
-Furthermore, certain edits can cause the AddressBook to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
+If your changes make the data file invalid, TutorConnect starts with an empty workspace at the next run. The invalid file remains on disk until you run a command (TutorConnect saves after every command). Still, we recommend backing up the file before editing it.<br>
+Furthermore, certain edits can cause TutorConnect to behave unexpectedly (for example, if a value is outside the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
 </div>
 
 ### Archiving data files `[coming in v2.0]`
@@ -217,7 +217,7 @@ _Details coming soon ..._
 ## FAQ
 
 **Q**: How do I transfer my data to another computer?<br>
-**A**: Install the app on the other computer and overwrite the data file it creates with the data file from your previous AddressBook home folder.
+**A**: Install the app on the other computer and overwrite the data file it creates with the data file from your previous TutorConnect home folder.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -233,9 +233,12 @@ _Details coming soon ..._
 Action | Format, Examples
 --------|------------------
 **Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
+**Add student** | `add-student n/NAME p/PHONE_NUMBER`<br> e.g., `add-student n/Alex Tan p/91234567`
+**Add guardian** | `add-guardian n/NAME p/PHONE_NUMBER`<br> e.g., `add-guardian n/Amelia Tan p/92345678`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
 **Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List** | `list`
+**Link** | `link s/STUDENT_ID g/GUARDIAN_ID`<br> e.g., `link s/S1 g/G1`
 **Help** | `help`
