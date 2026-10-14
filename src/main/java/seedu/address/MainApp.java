@@ -63,7 +63,7 @@ public class MainApp extends Application {
      * Returns a {@code ModelManager} with the data from {@code storage}'s address book and {@code userPrefs}. <br>
      * An empty TutorConnect workspace is used if {@code storage}'s data file is not found or cannot be read.
      */
-    private Model initModelManager(Storage storage, ReadOnlyUserPrefs userPrefs) {
+    Model initModelManager(Storage storage, ReadOnlyUserPrefs userPrefs) {
         logger.info("Using data file : " + storage.getAddressBookFilePath());
 
         Optional<ReadOnlyAddressBook> addressBookOptional;
