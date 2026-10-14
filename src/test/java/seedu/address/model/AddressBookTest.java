@@ -7,6 +7,8 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
+import static seedu.address.testutil.TypicalPersons.BENSON;
+import static seedu.address.testutil.TypicalPersons.CARL;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.util.Collection;
@@ -27,6 +29,23 @@ public class AddressBookTest {
     @Test
     public void constructor() {
         assertEquals(List.of(), addressBook.getPersonList());
+    }
+
+    @Test
+    public void setPersons_contactsOutOfOrder_sortsByContactId() {
+        Person guardian = new PersonBuilder().withName("Amelia Tan").withTags("guardian", "G1").build();
+        Person student10 = new PersonBuilder().withName("Ben Lim").withTags("student", "S10").build();
+        Person student2 = new PersonBuilder().withName("Alex Tan").withTags("student", "S2").build();
+        addressBook.setPersons(List.of(BENSON, guardian, ALICE, student10, student2));
+        assertEquals(List.of(student2, student10, guardian, BENSON, ALICE), addressBook.getPersonList());
+    }
+
+    @Test
+    public void setPerson_contactWithoutId_keepsPosition() {
+        addressBook.setPersons(List.of(ALICE, BENSON, CARL));
+        Person editedBenson = new PersonBuilder(BENSON).withTags(VALID_TAG_HUSBAND).build();
+        addressBook.setPerson(BENSON, editedBenson);
+        assertEquals(List.of(ALICE, editedBenson, CARL), addressBook.getPersonList());
     }
 
     @Test
