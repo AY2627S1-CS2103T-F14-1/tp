@@ -12,13 +12,19 @@ public class ListCommand extends Command {
 
     public static final String COMMAND_WORD = "list";
 
-    public static final String MESSAGE_SUCCESS = "Listed all persons.";
+    public static final String MESSAGE_SUCCESS = "Listed all TutorConnect contacts. Relationships: none.";
 
 
     @Override
     public CommandResult execute(Model model) {
         requireNonNull(model);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
-        return new CommandResult(MESSAGE_SUCCESS);
+        String relationships = model.getGuardianLinks().stream()
+                .map(link -> link.getGuardianId() + " -> " + link.getStudentId())
+                .reduce((first, second) -> first + ", " + second)
+                .orElse("none");
+        String message = relationships.equals("none") ? MESSAGE_SUCCESS
+                : "Listed all TutorConnect contacts. Relationships: " + relationships + ".";
+        return new CommandResult(message);
     }
 }

@@ -51,6 +51,8 @@ public class EditCommand extends Command {
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited person: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
+    public static final String MESSAGE_CONTACT_TAGS_PROTECTED =
+            "Tags of TutorConnect contacts cannot be edited because they contain the contact ID.";
 
     private final Index index;
     private final EditPersonDescriptor editPersonDescriptor;
@@ -77,6 +79,11 @@ public class EditCommand extends Command {
         }
 
         Person personToEdit = lastShownList.get(index.getZeroBased());
+        boolean hasTutorConnectId = personToEdit.getTags().stream()
+                .anyMatch(tag -> tag.tagName.matches("[SG][1-9][0-9]*"));
+        if (hasTutorConnectId && editPersonDescriptor.getTags().isPresent()) {
+            throw new CommandException(MESSAGE_CONTACT_TAGS_PROTECTED);
+        }
         Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
 
         if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {

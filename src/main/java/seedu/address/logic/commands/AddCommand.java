@@ -37,6 +37,7 @@ public class AddCommand extends Command {
 
     public static final String MESSAGE_SUCCESS = "New person added: %1$s";
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
+    public static final String MESSAGE_RESERVED_ID_TAG = "Student and guardian ID tags are reserved for TutorConnect.";
 
     private final Person toAdd;
 
@@ -52,6 +53,9 @@ public class AddCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
+        if (toAdd.getTags().stream().anyMatch(tag -> tag.tagName.matches("[SG][1-9][0-9]*"))) {
+            throw new CommandException(MESSAGE_RESERVED_ID_TAG);
+        }
         if (model.hasPerson(toAdd)) {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
         }

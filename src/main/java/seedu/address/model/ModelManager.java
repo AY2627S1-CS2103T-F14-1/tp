@@ -3,6 +3,7 @@ package seedu.address.model;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -10,7 +11,10 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.model.guardian.GuardianId;
+import seedu.address.model.link.GuardianLink;
 import seedu.address.model.person.Person;
+import seedu.address.model.student.StudentId;
 
 /**
  * Represents the in-memory model of the address book data.
@@ -84,6 +88,42 @@ public class ModelManager implements Model {
     public void addPerson(Person person) {
         addressBook.addPerson(person);
         updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+    }
+
+    @Override
+    public StudentId allocateStudentId() {
+        return addressBook.allocateStudentId();
+    }
+
+    @Override
+    public GuardianId allocateGuardianId() {
+        return addressBook.allocateGuardianId();
+    }
+
+    @Override
+    public boolean hasContact(String contactId) {
+        return addressBook.getPersonList().stream()
+                .flatMap(person -> person.getTags().stream())
+                .anyMatch(tag -> tag.tagName.equals(contactId));
+    }
+
+    @Override
+    public void addGuardianLink(GuardianLink link) {
+        addressBook.addGuardianLink(link);
+    }
+
+    @Override
+    public boolean deleteContact(String contactId) {
+        boolean wasDeleted = addressBook.deleteContact(contactId);
+        if (wasDeleted) {
+            updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        }
+        return wasDeleted;
+    }
+
+    @Override
+    public List<GuardianLink> getGuardianLinks() {
+        return addressBook.getGuardianLinks();
     }
 
     @Override

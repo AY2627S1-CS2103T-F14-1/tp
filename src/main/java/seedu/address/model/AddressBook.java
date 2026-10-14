@@ -2,12 +2,16 @@ package seedu.address.model;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.model.guardian.GuardianId;
+import seedu.address.model.link.GuardianLink;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.UniquePersonList;
+import seedu.address.model.student.StudentId;
 
 /**
  * Wraps all data at the address-book level.
@@ -16,6 +20,9 @@ import seedu.address.model.person.UniquePersonList;
 public class AddressBook implements ReadOnlyAddressBook {
 
     private final UniquePersonList persons = new UniquePersonList();
+    private final List<GuardianLink> guardianLinks = new ArrayList<>();
+    private int nextStudentNumber = 1;
+    private int nextGuardianNumber = 1;
 
     public AddressBook() {}
 
@@ -44,6 +51,10 @@ public class AddressBook implements ReadOnlyAddressBook {
         requireNonNull(newData);
 
         setPersons(newData.getPersonList());
+        guardianLinks.clear();
+        guardianLinks.addAll(newData.getGuardianLinks());
+        nextStudentNumber = newData.getNextStudentNumber();
+        nextGuardianNumber = newData.getNextGuardianNumber();
     }
 
     //// person-level operations
@@ -83,6 +94,54 @@ public class AddressBook implements ReadOnlyAddressBook {
         persons.remove(key);
     }
 
+    /** Deletes a TutorConnect contact and its related guardian links. */
+    public boolean deleteContact(String contactId) {
+        Person contact = persons.asUnmodifiableObservableList().stream()
+                .filter(person -> person.getTags().stream().anyMatch(tag -> tag.tagName.equals(contactId)))
+                .findFirst().orElse(null);
+        if (contact == null) {
+            return false;
+        }
+        persons.remove(contact);
+        if (StudentId.isValidStudentId(contactId)) {
+            StudentId studentId = new StudentId(contactId);
+            guardianLinks.removeIf(link -> link.involves(studentId));
+        } else {
+            GuardianId guardianId = new GuardianId(contactId);
+            guardianLinks.removeIf(link -> link.involves(guardianId));
+        }
+        return true;
+    }
+
+    /** Allocates the next stable student identifier. */
+    public StudentId allocateStudentId() {
+        return new StudentId("S" + nextStudentNumber++);
+    }
+
+    /** Allocates the next stable guardian identifier. */
+    public GuardianId allocateGuardianId() {
+        return new GuardianId("G" + nextGuardianNumber++);
+    }
+
+    /** Adds a relationship after its contacts have been validated by the model. */
+    public void addGuardianLink(GuardianLink link) {
+        requireNonNull(link);
+        if (guardianLinks.contains(link)) {
+            throw new IllegalArgumentException("That guardian is already linked to that student.");
+        }
+        guardianLinks.add(link);
+    }
+
+    /** Restores the saved TutorConnect relationships and allocation counters. */
+    public void restoreTutorConnectData(List<GuardianLink> links, int savedNextStudentNumber,
+            int savedNextGuardianNumber) {
+        requireNonNull(links);
+        guardianLinks.clear();
+        guardianLinks.addAll(links);
+        nextStudentNumber = Math.max(1, savedNextStudentNumber);
+        nextGuardianNumber = Math.max(1, savedNextGuardianNumber);
+    }
+
     //// util methods
 
     @Override
@@ -95,6 +154,21 @@ public class AddressBook implements ReadOnlyAddressBook {
     @Override
     public ObservableList<Person> getPersonList() {
         return persons.asUnmodifiableObservableList();
+    }
+
+    @Override
+    public List<GuardianLink> getGuardianLinks() {
+        return List.copyOf(guardianLinks);
+    }
+
+    @Override
+    public int getNextStudentNumber() {
+        return nextStudentNumber;
+    }
+
+    @Override
+    public int getNextGuardianNumber() {
+        return nextGuardianNumber;
     }
 
     @Override

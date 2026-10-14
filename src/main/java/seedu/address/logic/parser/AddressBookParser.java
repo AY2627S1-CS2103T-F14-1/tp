@@ -9,15 +9,21 @@ import java.util.regex.Pattern;
 
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.AddCommand;
+import seedu.address.logic.commands.AddGuardianCommand;
+import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.DeleteCommand;
+import seedu.address.logic.commands.DeleteContactCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
+import seedu.address.logic.commands.LinkCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.guardian.GuardianId;
+import seedu.address.model.student.StudentId;
 
 /**
  * Parses user input.
@@ -53,8 +59,11 @@ public class AddressBookParser {
 
         return switch (commandWord) {
             case AddCommand.COMMAND_WORD -> new AddCommandParser().parse(arguments);
+            case AddStudentCommand.COMMAND_WORD -> new AddStudentCommandParser().parse(arguments);
+            case AddGuardianCommand.COMMAND_WORD -> new AddGuardianCommandParser().parse(arguments);
+            case LinkCommand.COMMAND_WORD -> new LinkCommandParser().parse(arguments);
             case EditCommand.COMMAND_WORD -> new EditCommandParser().parse(arguments);
-            case DeleteCommand.COMMAND_WORD -> new DeleteCommandParser().parse(arguments);
+            case DeleteCommand.COMMAND_WORD -> parseDeleteCommand(arguments);
             case ClearCommand.COMMAND_WORD -> new ClearCommand();
             case FindCommand.COMMAND_WORD -> new FindCommandParser().parse(arguments);
             case ListCommand.COMMAND_WORD -> new ListCommand();
@@ -65,6 +74,14 @@ public class AddressBookParser {
                 throw new ParseException(MESSAGE_UNKNOWN_COMMAND);
             }
         };
+    }
+
+    private Command parseDeleteCommand(String arguments) throws ParseException {
+        String contactId = arguments.trim();
+        if (StudentId.isValidStudentId(contactId) || GuardianId.isValidGuardianId(contactId)) {
+            return new DeleteContactCommand(contactId);
+        }
+        return new DeleteCommandParser().parse(arguments);
     }
 
 }

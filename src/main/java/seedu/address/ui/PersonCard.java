@@ -47,7 +47,12 @@ public class PersonCard extends UiPart<Region> {
     public PersonCard(Person person, int displayedIndex) {
         super(FXML);
         this.person = person;
-        id.setText(displayedIndex + ". ");
+        String contactId = person.getTags().stream()
+                .map(tag -> tag.tagName)
+                .filter(tag -> tag.matches("[SG][1-9][0-9]*"))
+                .findFirst()
+                .orElse(String.valueOf(displayedIndex));
+        id.setText(contactId + ". ");
         name.setText(person.getName().fullName);
         phone.setText(person.getPhone().value);
         address.setText(person.getAddress().value);
