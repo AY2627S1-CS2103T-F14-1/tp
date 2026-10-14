@@ -21,6 +21,7 @@ import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.guardian.GuardianId;
 import seedu.address.model.link.GuardianLink;
 import seedu.address.model.student.StudentId;
+import seedu.address.testutil.PersonBuilder;
 
 public class JsonAddressBookStorageTest {
     private static final Path TEST_DATA_FOLDER = Paths.get("src", "test", "data", "JsonAddressBookStorageTest");
@@ -96,6 +97,8 @@ public class JsonAddressBookStorageTest {
         StudentId studentId = original.allocateStudentId();
         original.allocateStudentId();
         GuardianId guardianId = original.allocateGuardianId();
+        original.addPerson(new PersonBuilder().withName("Alex Tan").withTags(studentId.toString()).build());
+        original.addPerson(new PersonBuilder().withName("Amelia Tan").withTags(guardianId.toString()).build());
         original.addGuardianLink(new GuardianLink(studentId, guardianId));
         JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
 
