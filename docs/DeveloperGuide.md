@@ -137,7 +137,7 @@ The `Model` component,
 
 ### Storage component
 
-**API** : [`Storage.java`](https://github.com/se-edu/addressbook-level3/tree/master/src/main/java/seedu/address/storage/Storage.java)
+**API** : [`Storage.java`](https://github.com/AY2627S1-CS2103T-F14-1/tp/tree/master/src/main/java/seedu/address/storage/Storage.java)
 
 <img src="images/StorageClassDiagram.png" width="550" />
 
@@ -145,6 +145,52 @@ The `Storage` component,
 * can save both address book data and user preference data in JSON format, and read them back into corresponding objects.
 * is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonAddressBookStorage` and `JsonUserPrefsStorage` (one class per data file).
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
+
+#### What TutorConnect saves
+
+TutorConnect keeps all of its data in a single file, `data/tutorconnect.json`. Besides the contacts themselves, this file holds everything the `Model` needs to restore the full set of student and guardian records:
+
+| JSON field | Stored by | Purpose |
+| --- | --- | --- |
+| `persons` | `JsonAdaptedPerson` | Every contact, including its student ID (`S…`) or guardian ID (`G…`), which is kept as a tag. |
+| `guardianLinks` | `JsonAdaptedGuardianLink` | Each guardian-student link, stored as a `studentId` and `guardianId` pair. |
+| `nextStudentNumber`, `nextGuardianNumber` | `JsonSerializableAddressBook` | The numbers used for the next generated student and guardian IDs. |
+
+The ID counters are saved so that IDs are never reused. For example, if `S3` is deleted, the next student is still given `S4` after a restart.
+
+#### Loading data
+
+`JsonAddressBookStorage#readAddressBook()` reads the file into a `JsonSerializableAddressBook`, and `JsonSerializableAddressBook#toModelType()` converts it back into a `Model` object. During conversion, the saved data is validated before it is accepted. The file is rejected if it contains:
+* duplicate contacts or duplicate contact IDs,
+* a contact with more than one contact ID,
+* duplicate guardian links,
+* a guardian link that refers to a contact that does not exist, or
+* an ID counter that is not greater than every saved ID of that kind.
+
+Any of these causes a `DataLoadingException`. `MainApp#initModelManager` then starts TutorConnect with an empty workspace instead of loading partial or inconsistent data. The invalid file is left on disk until the next command saves over it, which is why the User Guide advises backing up the file before editing it by hand.
+
+Data files written before guardian links existed have no `guardianLinks` or ID counter fields. These fields default to no links and counters starting at 1, so older files still load.
+
+#### Saving data
+
+`LogicManager` calls `Storage#saveAddressBook(ReadOnlyAddressBook)` after every successfully executed command, so users never need to save manually. The write goes through `FileUtil#writeToFile`, which makes the save atomic:
+
+1. The JSON content is written to a temporary file in the same folder as `tutorconnect.json`.
+2. The temporary file is moved over `tutorconnect.json` with `StandardCopyOption.ATOMIC_MOVE`.
+3. The temporary file is deleted if it still exists, for example because the write failed part-way.
+
+If the application is closed, crashes or runs out of disk space during a save, the previous `tutorconnect.json` remains intact. It is never left half-written.
+
+<div markdown="span" class="alert alert-info">:information_source: **Note:** The temporary file must be in the same folder as the data file. An atomic move is only possible within one file system.</div>
+
+**Design considerations:**
+
+* **Alternative 1 (current choice):** Write to a temporary file, then atomically move it over the data file.
+  * Pros: A failed or interrupted save can never corrupt the existing data.
+  * Cons: Needs a second file to exist briefly, and requires a file system that supports atomic moves.
+* **Alternative 2:** Write directly to `tutorconnect.json`.
+  * Pros: Simpler to implement.
+  * Cons: A crash during the write can leave a truncated file, which then fails validation on the next start and loses the user's data.
 
 ### Common classes
 
