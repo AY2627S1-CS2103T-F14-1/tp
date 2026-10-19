@@ -131,21 +131,18 @@ Guardians:
 G1 Amelia Tan, 92345678 (students: S1, S2)
 ```
 
-### Editing a person: `edit`
+### Editing a contact: `edit`
 
-Edits an existing person in the address book.
+Format: `edit ID [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS]`
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`
-
-* Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …​
-* At least one of the optional fields must be provided.
-* Existing values will be updated to the input values.
-* When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
-* To remove all of a person's tags, enter `t/` without a tag after it.
+* Use the student or guardian ID shown in the contact list, such as `S1` or `G2`.
+* Provide at least one field. Existing values are replaced; the ID and guardian links stay unchanged.
+* Tags cannot be edited for TutorConnect contacts because they contain the contact ID.
+* The legacy `edit INDEX` form targets a position in the current filtered list. Since TutorConnect displays IDs instead of list positions, use the ID form for TutorConnect contacts.
 
 Examples:
-*  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
-*  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
+* `edit S1 p/91234567` changes student S1's phone number.
+* `edit G2 n/Amelia Tan p/92345678` changes guardian G2's name and phone number.
 
 ### Locating persons by name: `find`
 
@@ -174,13 +171,9 @@ Format: `delete ID` or `delete INDEX`
   Any guardian-student relationships involving that contact are removed automatically.
 * Contact IDs are never reused.
 
-* Deletes the person at the specified `INDEX`.
-* The index refers to the index number shown in the displayed person list.
-* The index **must be a positive integer** 1, 2, 3, …​
+* The legacy `delete INDEX` form targets a position in the current filtered list. Since TutorConnect displays IDs instead of list positions, use the ID form for TutorConnect contacts.
 
-Examples:
-* `list` followed by `delete 2` deletes the 2nd person in the address book.
-* `find Betsy` followed by `delete 1` deletes the 1st person in the results of the `find` command.
+Example: `delete S1` deletes student S1 and its guardian links.
 
 ### Clearing all entries: `clear`
 
@@ -236,8 +229,8 @@ Action | Format, Examples
 **Add student** | `add-student n/NAME p/PHONE_NUMBER`<br> e.g., `add-student n/Alex Tan p/91234567`
 **Add guardian** | `add-guardian n/NAME p/PHONE_NUMBER`<br> e.g., `add-guardian n/Amelia Tan p/92345678`
 **Clear** | `clear`
-**Delete** | `delete INDEX`<br> e.g., `delete 3`
-**Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g., `edit 2 n/James Lee e/jameslee@example.com`
+**Delete** | `delete ID`<br> e.g., `delete S1`
+**Edit** | `edit ID [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS]`<br> e.g., `edit S1 n/James Lee`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List** | `list`
 **Link** | `link s/STUDENT_ID g/GUARDIAN_ID`<br> e.g., `link s/S1 g/G1`
