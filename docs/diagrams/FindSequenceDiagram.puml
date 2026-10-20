@@ -7,7 +7,7 @@ participant ":LogicManager" as LogicManager LOGIC_COLOR
 participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
 participant ":FindCommandParser" as FindCommandParser LOGIC_COLOR
 participant "f:FindCommand" as FindCommand LOGIC_COLOR
-participant "<<class>>\nListCommand" as ListCommand LOGIC_COLOR
+participant "<<class>>\nMessages" as Messages LOGIC_COLOR
 participant "r:CommandResult" as CommandResult LOGIC_COLOR
 end box
 
@@ -76,11 +76,11 @@ activate Model
 Model --> FindCommand : links
 deactivate Model
 
-FindCommand -> ListCommand : formatContacts(students, guardians, links)
-activate ListCommand
+FindCommand -> Messages : formatContacts(students, guardians, links)
+activate Messages
 
-ListCommand --> FindCommand : contact lines
-deactivate ListCommand
+Messages --> FindCommand : contact lines
+deactivate Messages
 
 create CommandResult
 FindCommand -> CommandResult

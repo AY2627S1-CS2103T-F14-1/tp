@@ -169,7 +169,7 @@ The sequence diagram below shows how `find tan` is executed.
 
 1. `FindCommandParser` splits the arguments on whitespace and wraps the keywords in a `NameContainsKeywordsPredicate`. A name matches if it contains any keyword as a whole word, ignoring case.
 1. `FindCommand#execute()` combines that predicate with a check that the person has a student or guardian ID, so legacy AB3 persons without an ID are never shown. It then updates the filtered person list in the `Model`.
-1. `FindCommand` splits the filtered list into students and guardians, gets the guardian links from the `Model`, and passes them to `ListCommand#formatContacts()`. Sharing this method keeps the output of `find` and `list` consistent.
+1. `FindCommand` splits the filtered list into students and guardians, gets the guardian links from the `Model`, and passes them to `Messages#formatContacts()`. `ListCommand` uses the same method, so `find` and `list` output stays consistent without either command depending on the other.
 1. If nothing matches, the result is `No students or guardians match your search.` instead.
 
 #### Design considerations:

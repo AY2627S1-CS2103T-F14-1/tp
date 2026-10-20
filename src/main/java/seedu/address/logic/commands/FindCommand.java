@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.logic.Messages;
 import seedu.address.model.Model;
 import seedu.address.model.person.ContactOrder;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
@@ -58,8 +59,8 @@ public class FindCommand extends Command {
         }
 
         return new CommandResult(String.format(MESSAGE_SUMMARY,
-                ListCommand.pluralize(students.size(), "student"), ListCommand.pluralize(guardians.size(), "guardian"))
-                + ListCommand.formatContacts(students, guardians, model.getGuardianLinks()));
+                Messages.pluralize(students.size(), "student"), Messages.pluralize(guardians.size(), "guardian"))
+                + Messages.formatContacts(students, guardians, model.getGuardianLinks()));
     }
 
     @Override
