@@ -156,6 +156,33 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 This section describes some noteworthy details on how certain features are implemented.
 
+### Find contacts by name feature
+
+`FindCommand` finds students and guardians whose names contain any of the given keywords, and lists them with their IDs and linked contacts in the same format as `list`.
+
+The sequence diagram below shows how `find tan` is executed.
+
+![Interactions for the `find tan` Command](images/FindSequenceDiagram.png)
+
+<div markdown="span" class="alert alert-info">:information_source: **Note:** The lifeline for `FindCommandParser` should end at the destroy marker (X), but due to a limitation of PlantUML, it continues to the end of the diagram.
+</div>
+
+1. `FindCommandParser` splits the arguments on whitespace and wraps the keywords in a `NameContainsKeywordsPredicate`. A name matches if it contains any keyword as a whole word, ignoring case.
+1. `FindCommand#execute()` combines that predicate with a check that the person has a student or guardian ID, so legacy AB3 persons without an ID are never shown. It then updates the filtered person list in the `Model`.
+1. `FindCommand` splits the filtered list into students and guardians, gets the guardian links from the `Model`, and passes them to `ListCommand#formatContacts()`. Sharing this method keeps the output of `find` and `list` consistent.
+1. If nothing matches, the result is `No students or guardians match your search.` instead.
+
+#### Design considerations:
+
+**Aspect: How keywords match names:**
+
+* **Alternative 1 (current choice):** Match whole words, ignoring case (`Ale` does not match `Alex`).
+  * Pros: Reuses the tested AB3 predicate, and results are predictable.
+  * Cons: Users must type the full first name or last name.
+* **Alternative 2:** Match the start of any word (`Ale` matches `Alex`).
+  * Pros: Faster to type when a tutor remembers only part of a name.
+  * Cons: Short keywords can match many contacts.
+
 ### \[Proposed\] Undo/redo feature
 
 #### Proposed Implementation
