@@ -36,9 +36,17 @@ public class ListCommand extends Command {
             return new CommandResult(MESSAGE_NO_CONTACTS);
         }
 
-        List<GuardianLink> links = model.getGuardianLinks();
-        StringBuilder message = new StringBuilder(String.format(MESSAGE_SUMMARY,
-                pluralise(students.size(), "student"), pluralise(guardians.size(), "guardian")));
+        return new CommandResult(String.format(MESSAGE_SUMMARY,
+                pluralize(students.size(), "student"), pluralize(guardians.size(), "guardian"))
+                + formatContacts(students, guardians, model.getGuardianLinks()));
+    }
+
+    /**
+     * Formats the students and guardians sections shown below a summary line, each contact with its linked IDs.
+     * Sections with no contacts are left out.
+     */
+    static String formatContacts(List<Person> students, List<Person> guardians, List<GuardianLink> links) {
+        StringBuilder message = new StringBuilder();
         if (!students.isEmpty()) {
             message.append("\nStudents:");
             for (Person student : students) {
@@ -59,7 +67,7 @@ public class ListCommand extends Command {
                 message.append('\n').append(formatContact(guardian, guardianId, "students", studentIds));
             }
         }
-        return new CommandResult(message.toString());
+        return message.toString();
     }
 
     /**
@@ -72,7 +80,7 @@ public class ListCommand extends Command {
                 linked.isEmpty() ? NO_LINKS : linked);
     }
 
-    private static String pluralise(int count, String noun) {
+    static String pluralize(int count, String noun) {
         return count + " " + noun + (count == 1 ? "" : "s");
     }
 }
