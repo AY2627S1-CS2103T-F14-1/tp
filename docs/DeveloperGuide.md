@@ -169,7 +169,9 @@ The ID counters are saved so that IDs are never reused. For example, if `S3` is 
 
 Any of these causes a `DataLoadingException`. `MainApp#initModelManager` then starts TutorConnect with an empty workspace instead of loading partial or inconsistent data. The invalid file is left on disk until the next command saves over it, which is why the User Guide advises backing up the file before editing it by hand.
 
-Data files written before guardian links existed have no `guardianLinks` or ID counter fields. These fields default to no links and counters starting at 1, so older files still load.
+The `guardianLinks`, `nextStudentNumber` and `nextGuardianNumber` fields are optional when reading. A missing `guardianLinks` defaults to no links, and a missing counter defaults to 1. The defaults are validated like any saved value, so not every older file loads:
+* A legacy file whose contacts have no student or guardian IDs still loads, because there is no saved ID for the default counter of 1 to conflict with.
+* A file that contains `S…` or `G…` IDs but lacks the matching counter is rejected, because the default counter of 1 is not greater than the saved IDs. Such a file must have its counters added by hand before it can load.
 
 #### Saving data
 
