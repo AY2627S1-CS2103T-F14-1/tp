@@ -48,9 +48,10 @@ public class FindCommand extends Command {
         Predicate<Person> isContact = person -> ContactOrder.isStudent(person) || ContactOrder.isGuardian(person);
         model.updateFilteredPersonList(isContact.and(predicate));
 
-        List<Person> students = model.getFilteredPersonList().stream().filter(ContactOrder::isStudent).toList();
-        List<Person> guardians = model.getFilteredPersonList().stream().filter(ContactOrder::isGuardian).toList();
-        assert students.size() + guardians.size() == model.getFilteredPersonList().size()
+        List<Person> matches = model.getFilteredPersonList();
+        List<Person> students = matches.stream().filter(ContactOrder::isStudent).toList();
+        List<Person> guardians = matches.stream().filter(ContactOrder::isGuardian).toList();
+        assert students.size() + guardians.size() == matches.size()
                 : "Filtered list should only contain students and guardians";
         logger.fine("Found " + students.size() + " students and " + guardians.size() + " guardians for "
                 + predicate);
