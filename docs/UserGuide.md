@@ -144,22 +144,29 @@ Examples:
 * `edit S1 p/91234567` changes student S1's phone number.
 * `edit G2 n/Amelia Tan p/92345678` changes guardian G2's name and phone number.
 
-### Locating persons by name: `find`
+### Finding contacts by name: `find`
 
-Finds persons whose names contain any of the given keywords.
+Finds students and guardians whose names contain any of the given keywords. The result box lists each match with their ID, name, phone number, and linked contacts, in the same format as `list`.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
-* The search is case-insensitive; for example, `hans` matches `Hans`.
-* Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
+* The search is case-insensitive; for example, `tan` matches `Tan`.
+* Keyword order does not matter; for example, `Tan Alex` matches `Alex Tan`.
 * The search considers only names.
-* Only full words match; for example, `Han` does not match `Hans`.
-* Persons matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
+* Only full words match; for example, `Ale` does not match `Alex`.
+* Contacts matching at least one keyword are returned (an `OR` search); for example, `Ben Chloe` returns `Ben Lim` and `Chloe Ng`.
+* If nothing matches, TutorConnect shows `No students or guardians match your search.`
+* Use `list` to show all contacts again.
 
-Examples:
-* `find John` returns `john` and `John Doe`
-* `find alex david` returns `Alex Yeoh`, `David Li`<br>
-  ![result for 'find alex david'](images/findAlexDavidResult.png)
+Example: with the contacts from the `list` example above, `find tan` shows:
+
+```
+Found 1 student and 1 guardian.
+Students:
+S1 Alex Tan, 91234567 (guardians: G1)
+Guardians:
+G1 Amelia Tan, 92345678 (students: S1, S2)
+```
 
 ### Deleting a contact: `delete`
 
@@ -231,7 +238,7 @@ Action | Format, Examples
 **Clear** | `clear`
 **Delete** | `delete ID`<br> e.g., `delete S1`
 **Edit** | `edit ID [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS]`<br> e.g., `edit S1 n/James Lee`
-**Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
+**Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find alex amelia`
 **List** | `list`
 **Link** | `link s/STUDENT_ID g/GUARDIAN_ID`<br> e.g., `link s/S1 g/G1`
 **Help** | `help`
