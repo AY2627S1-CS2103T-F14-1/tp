@@ -22,6 +22,7 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.ContactOrder;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
@@ -36,15 +37,15 @@ public class EditCommand extends Command {
     public static final String COMMAND_WORD = "edit";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Edits the details of the person identified "
-            + "by the index number used in the displayed person list. "
+            + "by contact ID or index in the displayed person list. "
             + "Existing values will be overwritten by the input values.\n"
-            + "Parameters: INDEX (must be a positive integer) "
+            + "Parameters: ID or INDEX (a positive integer) "
             + "[" + PREFIX_NAME + "NAME] "
             + "[" + PREFIX_PHONE + "PHONE] "
             + "[" + PREFIX_EMAIL + "EMAIL] "
             + "[" + PREFIX_ADDRESS + "ADDRESS] "
             + "[" + PREFIX_TAG + "TAG]...\n"
-            + "Example: " + COMMAND_WORD + " 1 "
+            + "Example: " + COMMAND_WORD + " S1 "
             + PREFIX_PHONE + "91234567 "
             + PREFIX_EMAIL + "johndoe@example.com";
 
@@ -55,6 +56,7 @@ public class EditCommand extends Command {
             "Tags of TutorConnect contacts cannot be edited because they contain the contact ID.";
 
     private final Index index;
+    private final String contactId;
     private final EditPersonDescriptor editPersonDescriptor;
 
     /**
@@ -66,19 +68,33 @@ public class EditCommand extends Command {
         requireNonNull(editPersonDescriptor);
 
         this.index = index;
+        this.contactId = null;
         this.editPersonDescriptor = new EditPersonDescriptor(editPersonDescriptor);
+    }
+
+    /** Creates an edit command targeting a stable student or guardian ID. */
+    public EditCommand(String contactId, EditPersonDescriptor editPersonDescriptor) {
+        this.index = null;
+        this.contactId = requireNonNull(contactId);
+        this.editPersonDescriptor = new EditPersonDescriptor(requireNonNull(editPersonDescriptor));
     }
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-        List<Person> lastShownList = model.getFilteredPersonList();
-
-        if (index.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+        Person personToEdit;
+        if (contactId != null) {
+            personToEdit = model.getAddressBook().getPersonList().stream()
+                    .filter(person -> ContactOrder.getContactId(person).filter(contactId::equals).isPresent())
+                    .findFirst()
+                    .orElseThrow(() -> new CommandException("No contact exists with ID " + contactId + "."));
+        } else {
+            List<Person> lastShownList = model.getFilteredPersonList();
+            if (index.getZeroBased() >= lastShownList.size()) {
+                throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+            }
+            personToEdit = lastShownList.get(index.getZeroBased());
         }
-
-        Person personToEdit = lastShownList.get(index.getZeroBased());
         boolean hasTutorConnectId = personToEdit.getTags().stream()
                 .anyMatch(tag -> tag.tagName.matches("[SG][1-9][0-9]*"));
         if (hasTutorConnectId && editPersonDescriptor.getTags().isPresent()) {
@@ -122,7 +138,8 @@ public class EditCommand extends Command {
             return false;
         }
 
-        return index.equals(otherEditCommand.index)
+        return Objects.equals(index, otherEditCommand.index)
+                && Objects.equals(contactId, otherEditCommand.contactId)
                 && editPersonDescriptor.equals(otherEditCommand.editPersonDescriptor);
     }
 

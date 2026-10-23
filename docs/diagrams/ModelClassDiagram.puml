@@ -1,4 +1,5 @@
 @startuml
+!pragma layout smetana
 !include style.puml
 skinparam arrowThickness 1.1
 skinparam arrowColor MODEL_COLOR
@@ -12,6 +13,9 @@ Class AddressBook
 Class ModelManager
 Class UserPrefs
 
+Class GuardianLink
+Class StudentId
+Class GuardianId
 Class UniquePersonList
 Class Person
 Class Address
@@ -36,6 +40,9 @@ ModelManager -right-> "1" UserPrefs
 UserPrefs .up.|> ReadOnlyUserPrefs
 
 AddressBook *--> "1" UniquePersonList
+AddressBook *--> "*" GuardianLink
+GuardianLink *--> "1" StudentId
+GuardianLink *--> "1" GuardianId
 UniquePersonList --> "~* all" Person
 Person *--> Name
 Person *--> Phone
