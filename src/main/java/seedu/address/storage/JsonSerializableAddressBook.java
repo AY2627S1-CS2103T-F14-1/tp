@@ -84,6 +84,7 @@ class JsonSerializableAddressBook {
             links.add(jsonLink.toModelType());
         }
         validateTutorConnectData(addressBook.getPersonList(), links);
+        assert links.size() == guardianLinks.size() : "Every saved guardian link should be restored";
         addressBook.restoreTutorConnectData(links, nextStudentNumber, nextGuardianNumber);
         return addressBook;
     }
@@ -130,6 +131,8 @@ class JsonSerializableAddressBook {
         if (nextNumber < 1) {
             return false;
         }
+        assert contactIds.stream().allMatch(contactId -> contactId.length() > 1)
+                : "Contact IDs should have already been validated as a prefix followed by a number";
         String nextNumberText = String.valueOf(nextNumber);
         return contactIds.stream()
                 .noneMatch(contactId -> compareIdNumbers(contactId.substring(1), nextNumberText) >= 0);
