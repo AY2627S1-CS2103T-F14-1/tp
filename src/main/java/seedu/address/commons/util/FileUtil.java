@@ -52,10 +52,12 @@ public class FileUtil {
      */
     public static void writeToFile(Path file, String content) throws IOException {
         Path directory = file.toAbsolutePath().getParent();
+        assert directory != null : "Cannot write to a path with no parent directory: " + file;
         Path tempFile = Files.createTempFile(directory, file.getFileName().toString(), ".tmp");
         try {
             Files.write(tempFile, content.getBytes(CHARSET));
             Files.move(tempFile, file, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            assert Files.isRegularFile(file) : "Atomic move did not produce " + file;
         } finally {
             Files.deleteIfExists(tempFile);
         }
