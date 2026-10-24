@@ -25,7 +25,7 @@ Class JsonAdaptedGuardianLink
 
 Class HiddenOutside #FFFFFF
 HiddenOutside ..> Storage
-Class GuardianLink #FFFFFF
+Class GuardianLink MODEL_COLOR
 
 StorageManager .up.|> Storage
 StorageManager -down-> "1" JsonUserPrefsStorage
