@@ -96,20 +96,6 @@ Format: `link s/STUDENT_ID g/GUARDIAN_ID`
 
 Example: `link s/S1 g/G1`
 
-### Adding a person: `add`
-
-Adds a person to the address book.
-
-Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]…​`
-
-<div markdown="span" class="alert alert-primary">:bulb: **Tip:**
-A person can have any number of tags, including zero.
-</div>
-
-Examples:
-* `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
-* `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
-
 ### Listing contacts: `list`
 
 Shows all contacts, clearing any filter from a previous `find`. The result box lists every student and guardian with their ID, name, phone number, and linked contacts.
@@ -208,9 +194,6 @@ If your changes make the data file invalid, TutorConnect starts with an empty wo
 Furthermore, certain edits can cause TutorConnect to behave unexpectedly (for example, if a value is outside the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
 </div>
 
-### Archiving data files `[coming in v2.0]`
-
-_Details coming soon ..._
 
 --------------------------------------------------------------------------------------------------------------------
 
