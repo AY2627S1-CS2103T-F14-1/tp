@@ -82,6 +82,9 @@ Adds a student and assigns the next permanent student ID (`S1`, `S2`, …).
 
 Format: `add-student n/NAME p/PHONE_NUMBER`
 
+* `NAME` can contain letters, digits and spaces, up to 100 characters.
+* `PHONE_NUMBER` can contain digits only, between 3 and 15 digits long.
+
 Example: `add-student n/Alex Tan p/91234567`
 
 ### Adding a guardian: `add-guardian`
@@ -89,6 +92,8 @@ Example: `add-student n/Alex Tan p/91234567`
 Adds a guardian and assigns the next permanent guardian ID (`G1`, `G2`, …).
 
 Format: `add-guardian n/NAME p/PHONE_NUMBER`
+
+* `NAME` and `PHONE_NUMBER` follow the same rules as for `add-student`.
 
 Example: `add-guardian n/Amelia Tan p/92345678`
 
@@ -212,7 +217,7 @@ Furthermore, certain edits can cause TutorConnect to behave unexpectedly (for ex
 1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
 2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
 3. **On macOS, if the app is in full-screen mode**, secondary windows such as the Help Window may not appear correctly. Leave full-screen mode before using `help`.
-4. **Names and phone numbers are checked loosely.** Names accept only letters, digits and spaces, and phone numbers accept only digits (at least 3). Symbols such as `'`, `-`, `/` and `+` are rejected for now.
+4. **Names and phone numbers are checked loosely.** Names accept only letters, digits and spaces (up to 100 characters), and phone numbers accept only digits (3 to 15 of them). Symbols such as `'`, `-`, `/` and `+` are rejected for now.
 
 --------------------------------------------------------------------------------------------------------------------
 
