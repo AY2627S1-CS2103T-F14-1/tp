@@ -51,6 +51,7 @@ public class NameTest {
         assertTrue(Name.isValidName("Mary-Jane")); // hyphen
         assertTrue(Name.isValidName("Tan Wei Ming s/o Tan Ah Kow")); // slash
         assertTrue(Name.isValidName("Robert Downey Jr.")); // full stop
+        assertTrue(Name.isValidName("Zoë D'Souza-Núñez")); // accented letters with punctuation
     }
 
     @Test
