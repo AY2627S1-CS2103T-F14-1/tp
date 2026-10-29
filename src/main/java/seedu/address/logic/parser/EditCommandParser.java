@@ -52,10 +52,14 @@ public class EditCommandParser implements Parser<EditCommand> {
         EditPersonDescriptor editPersonDescriptor = new EditPersonDescriptor();
 
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
-            editPersonDescriptor.setName(ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get()));
+            String name = argMultimap.getValue(PREFIX_NAME).get();
+            ParserUtil.verifyNoUnknownPrefix(name, EditCommand.MESSAGE_USAGE);
+            editPersonDescriptor.setName(ParserUtil.parseName(name));
         }
         if (argMultimap.getValue(PREFIX_PHONE).isPresent()) {
-            editPersonDescriptor.setPhone(ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get()));
+            String phone = argMultimap.getValue(PREFIX_PHONE).get();
+            ParserUtil.verifyNoUnknownPrefix(phone, EditCommand.MESSAGE_USAGE);
+            editPersonDescriptor.setPhone(ParserUtil.parsePhone(phone));
         }
         if (argMultimap.getValue(PREFIX_EMAIL).isPresent()) {
             editPersonDescriptor.setEmail(ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get()));

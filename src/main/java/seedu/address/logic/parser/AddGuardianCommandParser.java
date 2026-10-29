@@ -17,6 +17,8 @@ public class AddGuardianCommandParser implements Parser<AddGuardianCommand> {
         if (arguments.getPreamble().isEmpty() && arguments.getValue(PREFIX_NAME).isPresent()
                 && arguments.getValue(PREFIX_PHONE).isPresent()) {
             arguments.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE);
+            ParserUtil.verifyNoUnknownPrefix(arguments.getValue(PREFIX_NAME).get(), AddGuardianCommand.MESSAGE_USAGE);
+            ParserUtil.verifyNoUnknownPrefix(arguments.getValue(PREFIX_PHONE).get(), AddGuardianCommand.MESSAGE_USAGE);
             Name name = ParserUtil.parseName(arguments.getValue(PREFIX_NAME).get());
             Phone phone = ParserUtil.parsePhone(arguments.getValue(PREFIX_PHONE).get());
             return new AddGuardianCommand(name, phone);

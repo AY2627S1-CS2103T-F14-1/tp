@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddGuardianCommand;
 import seedu.address.logic.commands.AddStudentCommand;
 import seedu.address.logic.commands.ClearCommand;
@@ -102,6 +103,20 @@ public class AddressBookParserTest {
     public void parseCommand_list() throws Exception {
         assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD) instanceof ListCommand);
         assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD + " 3") instanceof ListCommand);
+    }
+
+    @Test
+    public void parseCommand_unknownPrefixAfterValue_throwsParseException() {
+        String expected = String.format(Messages.MESSAGE_UNKNOWN_PARAMETER, "x/", AddStudentCommand.MESSAGE_USAGE);
+        assertThrows(ParseException.class, expected, () ->
+                parser.parseCommand("add-student n/Alex Tan p/91234567 x/foo"));
+        assertThrows(ParseException.class, expected, () ->
+                parser.parseCommand("add-student n/Alex Tan x/foo p/91234567"));
+        assertThrows(ParseException.class, String.format(Messages.MESSAGE_UNKNOWN_PARAMETER, "x/",
+                AddGuardianCommand.MESSAGE_USAGE), () ->
+                parser.parseCommand("add-guardian n/Amelia Tan p/92345678 x/foo"));
+        assertThrows(ParseException.class, String.format(Messages.MESSAGE_UNKNOWN_PARAMETER, "x/",
+                EditCommand.MESSAGE_USAGE), () -> parser.parseCommand("edit S1 p/91234567 x/foo"));
     }
 
     @Test

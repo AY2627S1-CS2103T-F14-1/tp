@@ -5,9 +5,12 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
+import seedu.address.logic.Messages;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
@@ -22,6 +25,9 @@ public class ParserUtil {
 
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
 
+    /** Matches a word followed by a slash that comes after a space, such as the {@code x/} in {@code 9123 x/foo}. */
+    private static final Pattern UNKNOWN_PREFIX_PATTERN = Pattern.compile("(?<=\\s)[A-Za-z]+/");
+
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be
      * trimmed.
@@ -33,6 +39,21 @@ public class ParserUtil {
             throw new ParseException(MESSAGE_INVALID_INDEX);
         }
         return Index.fromOneBased(Integer.parseInt(trimmedIndex));
+    }
+
+    /**
+     * Throws a {@code ParseException} naming the first unrecognised parameter, such as {@code x/}, found in
+     * {@code value}, so that it is not mistaken for part of the value it follows.
+     *
+     * @param value the raw value of a recognised parameter
+     * @param usage the usage message of the command, shown after the error
+     */
+    public static void verifyNoUnknownPrefix(String value, String usage) throws ParseException {
+        requireNonNull(value);
+        Matcher matcher = UNKNOWN_PREFIX_PATTERN.matcher(value);
+        if (matcher.find()) {
+            throw new ParseException(String.format(Messages.MESSAGE_UNKNOWN_PARAMETER, matcher.group(), usage));
+        }
     }
 
     /**
