@@ -1,6 +1,7 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
@@ -8,7 +9,10 @@ import seedu.address.model.guardian.GuardianId;
 import seedu.address.model.link.GuardianLink;
 import seedu.address.model.student.StudentId;
 
-/** Links an existing guardian to an existing student. */
+/**
+ * Links an existing guardian to an existing student.
+ * Like the other commands that change a contact, it clears any filter left by a previous {@code find}.
+ */
 public class LinkCommand extends Command {
     public static final String COMMAND_WORD = "link";
     public static final String MESSAGE_USAGE = COMMAND_WORD
@@ -35,6 +39,7 @@ public class LinkCommand extends Command {
         } catch (IllegalArgumentException exception) {
             throw new CommandException(exception.getMessage());
         }
+        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
         return new CommandResult("Linked " + guardianId + " to " + studentId + ".");
     }
 }

@@ -3,12 +3,15 @@ package seedu.address.logic.commands;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.ModelManager;
 import seedu.address.model.guardian.GuardianId;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.person.Phone;
 import seedu.address.model.student.StudentId;
 
@@ -31,6 +34,20 @@ public class TutorConnectCommandTest {
         assertTrue(model.hasContact("S1"));
         assertTrue(model.hasContact("G1"));
         assertEquals(1, model.getGuardianLinks().size());
+    }
+
+    @Test
+    public void execute_linkAfterFind_showsAllContactsAgain() throws CommandException {
+        ModelManager model = new ModelManager();
+        new AddStudentCommand(new Name("Alex Tan"), new Phone("91234567")).execute(model);
+        new AddStudentCommand(new Name("Bella Lim"), new Phone("93456789")).execute(model);
+        new AddGuardianCommand(new Name("Amelia Tan"), new Phone("92345678")).execute(model);
+        new FindCommand(new NameContainsKeywordsPredicate(List.of("Bella"))).execute(model);
+        assertEquals(1, model.getFilteredPersonList().size());
+
+        new LinkCommand(new StudentId("S2"), new GuardianId("G1")).execute(model);
+
+        assertEquals(3, model.getFilteredPersonList().size());
     }
 
     @Test
