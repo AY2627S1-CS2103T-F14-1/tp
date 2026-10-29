@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.util.ToStringBuilder;
@@ -196,11 +197,14 @@ public class AddressBook implements ReadOnlyAddressBook {
             return false;
         }
 
-        return persons.equals(otherAddressBook.persons);
+        return persons.equals(otherAddressBook.persons)
+                && guardianLinks.equals(otherAddressBook.guardianLinks)
+                && nextStudentNumber == otherAddressBook.nextStudentNumber
+                && nextGuardianNumber == otherAddressBook.nextGuardianNumber;
     }
 
     @Override
     public int hashCode() {
-        return persons.hashCode();
+        return Objects.hash(persons, guardianLinks, nextStudentNumber, nextGuardianNumber);
     }
 }

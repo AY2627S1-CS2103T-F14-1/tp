@@ -2,6 +2,7 @@ package seedu.address.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
@@ -123,6 +124,28 @@ public class AddressBookTest {
         addressBook.removePerson(guardian);
 
         assertEquals(List.of(), addressBook.getGuardianLinks());
+    }
+
+    @Test
+    public void equals_differentGuardianLinksOrCounters_returnsFalse() {
+        AddressBook first = new AddressBook();
+        AddressBook second = new AddressBook();
+        assertEquals(first, second);
+        assertEquals(first.hashCode(), second.hashCode());
+
+        // different ID counter
+        second.allocateStudentId();
+        assertNotEquals(first, second);
+
+        // different links
+        Person student = new PersonBuilder().withName("Alex Tan").withTags("student", "S1").build();
+        Person guardian = new PersonBuilder().withName("Amelia Tan").withTags("guardian", "G1").build();
+        AddressBook linked = new AddressBook();
+        linked.setPersons(List.of(student, guardian));
+        AddressBook unlinked = new AddressBook(linked);
+        assertEquals(linked, unlinked);
+        linked.addGuardianLink(new GuardianLink(new StudentId("S1"), new GuardianId("G1")));
+        assertNotEquals(linked, unlinked);
     }
 
     @Test

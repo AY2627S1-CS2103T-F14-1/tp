@@ -1,6 +1,7 @@
 package seedu.address.logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -22,8 +23,6 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.UserPrefs;
-import seedu.address.model.person.Name;
-import seedu.address.model.person.Phone;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
 import seedu.address.storage.StorageManager;
@@ -69,6 +68,44 @@ public class LogicManagerTest {
     public void execute_storageThrowsIoException_throwsCommandException() throws CommandException {
         assertCommandFailureForExceptionFromStorage(DUMMY_IO_EXCEPTION, String.format(
                 LogicManager.FILE_OPS_ERROR_FORMAT, DUMMY_IO_EXCEPTION.getMessage()));
+    }
+
+    @Test
+    public void execute_commandThatChangesNothing_doesNotSave() throws Exception {
+        JsonAddressBookStorage failingStorage = new JsonAddressBookStorage(temporaryFolder.resolve("never.json")) {
+            @Override
+            public void saveAddressBook(ReadOnlyAddressBook addressBook) throws IOException {
+                throw DUMMY_IO_EXCEPTION;
+            }
+        };
+        logic = new LogicManager(model, new StorageManager(failingStorage,
+                new JsonUserPrefsStorage(temporaryFolder.resolve("prefs.json"))));
+
+        assertEquals(ListCommand.MESSAGE_NO_CONTACTS, logic.execute(ListCommand.COMMAND_WORD).getFeedbackToUser());
+        assertTrue(logic.execute("exit").isExit());
+        assertEquals(new ModelManager(), model);
+    }
+
+    @Test
+    public void execute_failedSaveAfterDelete_restoresContactsAndLinks() throws Exception {
+        logic.execute("add-student n/Alex Tan p/91234567");
+        logic.execute("add-guardian n/Amelia Tan p/92345678");
+        logic.execute("link s/S1 g/G1");
+        Model before = new ModelManager(model.getAddressBook(), new UserPrefs());
+        JsonAddressBookStorage failingStorage = new JsonAddressBookStorage(temporaryFolder.resolve("never.json")) {
+            @Override
+            public void saveAddressBook(ReadOnlyAddressBook addressBook) throws IOException {
+                throw DUMMY_IO_EXCEPTION;
+            }
+        };
+        logic = new LogicManager(model, new StorageManager(failingStorage,
+                new JsonUserPrefsStorage(temporaryFolder.resolve("prefs.json"))));
+
+        assertThrows(CommandException.class, () -> logic.execute("delete S1"));
+
+        assertEquals(before, model);
+        assertEquals(1, model.getGuardianLinks().size());
+        assertEquals(2, model.getAddressBook().getPersonList().size());
     }
 
     @Test
@@ -161,8 +198,7 @@ public class LogicManagerTest {
 
         // Triggers saveAddressBook by executing a current TutorConnect add command.
         String addCommand = AddStudentCommand.COMMAND_WORD + " n/Amy Bee p/11111111";
-        ModelManager expectedModel = new ModelManager();
-        new AddStudentCommand(new Name("Amy Bee"), new Phone("11111111")).execute(expectedModel);
-        assertCommandFailure(addCommand, CommandException.class, expectedMessage, expectedModel);
+        // The failed save must leave the contacts exactly as they were before the command.
+        assertCommandFailure(addCommand, CommandException.class, expectedMessage, new ModelManager());
     }
 }

@@ -196,7 +196,7 @@ Format: `exit`
 
 ### Saving the data
 
-TutorConnect automatically saves data after every command. You do not need to save manually.
+TutorConnect automatically saves your data after every command that changes it. You do not need to save manually. If the data cannot be saved (for example because the folder is write-protected or the disk is full), TutorConnect shows an error and undoes that command, so what you see always matches what is on disk.
 
 ### Editing the data file
 
