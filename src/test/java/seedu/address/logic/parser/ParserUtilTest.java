@@ -58,6 +58,7 @@ public class ParserUtilTest {
     public void verifyNoUnknownPrefix_valueWithUnknownPrefix_throwsParseException() {
         assertThrows(ParseException.class, () -> ParserUtil.verifyNoUnknownPrefix("91234567 x/foo", "usage"));
         assertThrows(ParseException.class, () -> ParserUtil.verifyNoUnknownPrefix("Alex Tan  zz/bar baz", "usage"));
+        assertThrows(ParseException.class, () -> ParserUtil.verifyNoUnknownPrefix("Alex s/other", "usage"));
     }
 
     @Test
@@ -65,6 +66,8 @@ public class ParserUtilTest {
         ParserUtil.verifyNoUnknownPrefix("91234567", "usage");
         ParserUtil.verifyNoUnknownPrefix("Alex Tan", "usage");
         ParserUtil.verifyNoUnknownPrefix("Blk 1/2 Street", "usage"); // slash not preceded by letters only
+        ParserUtil.verifyNoUnknownPrefix("Tan Wei Ming s/o Tan Ah Kow", "usage"); // son of
+        ParserUtil.verifyNoUnknownPrefix("Siti D/O Rahman", "usage"); // daughter of, any case
     }
 
     @Test

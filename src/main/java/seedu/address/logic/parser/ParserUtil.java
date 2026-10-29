@@ -28,8 +28,12 @@ public class ParserUtil {
 
     public static final String MESSAGE_INVALID_INDEX = "Index must be a positive integer.";
 
-    /** Matches a word followed by a slash that comes after a space, such as the {@code x/} in {@code 9123 x/foo}. */
-    private static final Pattern UNKNOWN_PREFIX_PATTERN = Pattern.compile("(?<=\\s)[A-Za-z]+/");
+    /**
+     * Matches a word followed by a slash that comes after a space, such as the {@code x/} in {@code 9123 x/foo}.
+     * The name connectors {@code s/o} and {@code d/o} ("son of" and "daughter of") are not matched.
+     */
+    private static final Pattern UNKNOWN_PREFIX_PATTERN =
+            Pattern.compile("(?<=\\s)(?![sSdD]/[oO](?:\\s|$))[A-Za-z]+/");
 
     /**
      * Parses {@code oneBasedIndex} into an {@code Index} and returns it. Leading and trailing whitespaces will be
