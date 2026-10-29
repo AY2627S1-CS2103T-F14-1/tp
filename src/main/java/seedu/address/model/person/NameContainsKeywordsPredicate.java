@@ -7,7 +7,9 @@ import seedu.address.commons.util.StringUtil;
 import seedu.address.commons.util.ToStringBuilder;
 
 /**
- * Tests that a {@code Person}'s {@code Name} matches any of the keywords given.
+ * Tests that a {@code Person} matches any of the keywords given. A keyword matches if it is a word of the
+ * person's {@code Name}, the person's student or guardian ID, or the person's whole phone number.
+ * Matching ignores case.
  */
 public class NameContainsKeywordsPredicate implements Predicate<Person> {
     private final List<String> keywords;
@@ -18,8 +20,20 @@ public class NameContainsKeywordsPredicate implements Predicate<Person> {
 
     @Override
     public boolean test(Person person) {
-        return keywords.stream()
-                .anyMatch(keyword -> StringUtil.containsWordIgnoreCase(person.getName().fullName, keyword));
+        return keywords.stream().anyMatch(keyword -> matchesName(person, keyword)
+                || matchesContactId(person, keyword) || matchesPhone(person, keyword));
+    }
+
+    private static boolean matchesName(Person person, String keyword) {
+        return StringUtil.containsWordIgnoreCase(person.getName().fullName, keyword);
+    }
+
+    private static boolean matchesContactId(Person person, String keyword) {
+        return ContactOrder.getContactId(person).filter(keyword::equalsIgnoreCase).isPresent();
+    }
+
+    private static boolean matchesPhone(Person person, String keyword) {
+        return person.getPhone().value.equals(keyword);
     }
 
     @Override
