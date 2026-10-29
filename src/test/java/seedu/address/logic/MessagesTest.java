@@ -35,5 +35,7 @@ public class MessagesTest {
                 parser.parseCommand("edit S1 p/90000000").execute(model).getFeedbackToUser());
         assertEquals("Deleted contact: S1 Alex Tan, 90000000",
                 parser.parseCommand("delete 1").execute(model).getFeedbackToUser());
+        assertEquals("All contacts and links have been cleared.",
+                parser.parseCommand("clear confirm").execute(model).getFeedbackToUser());
     }
 }

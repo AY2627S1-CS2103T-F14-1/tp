@@ -20,7 +20,7 @@ public class ClearCommand extends Command {
 
     public static final String COMMAND_WORD = "clear";
     public static final String CONFIRMATION_KEYWORD = "confirm";
-    public static final String MESSAGE_SUCCESS = "Address book has been cleared!";
+    public static final String MESSAGE_SUCCESS = "All contacts and links have been cleared.";
     public static final String MESSAGE_CONFIRMATION_REQUIRED = "This will delete %1$s and %2$s and cannot be undone.\n"
             + "To go ahead, type: " + COMMAND_WORD + " " + CONFIRMATION_KEYWORD;
 
