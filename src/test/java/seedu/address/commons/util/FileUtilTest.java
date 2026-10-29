@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermissions;
@@ -71,6 +73,7 @@ public class FileUtilTest {
 
     @Test
     public void writeToFile_unwritableDirectory_throwsAccessDeniedNamingTheDataFile() throws IOException {
+        assumeTrue(FileSystems.getDefault().supportedFileAttributeViews().contains("posix")); // not on Windows
         Path directory = Files.createDirectory(testFolder.resolve("readonly"));
         Path file = directory.resolve("data.json");
         Files.setPosixFilePermissions(directory, PosixFilePermissions.fromString("r-xr-xr-x"));
