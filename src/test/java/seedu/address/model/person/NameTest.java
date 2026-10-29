@@ -55,6 +55,16 @@ public class NameTest {
     }
 
     @Test
+    public void isEquivalentTo() {
+        Name name = new Name("Alex Tan");
+        assertTrue(name.isEquivalentTo(new Name("Alex Tan")));
+        assertTrue(name.isEquivalentTo(new Name("alex tan"))); // different case
+        assertTrue(name.isEquivalentTo(new Name("ALEX  Tan"))); // different case and spacing
+        assertFalse(name.isEquivalentTo(new Name("Alex Tang")));
+        assertFalse(name.isEquivalentTo(new Name("AlexTan"))); // missing space
+    }
+
+    @Test
     public void equals() {
         Name name = new Name("Valid Name");
 

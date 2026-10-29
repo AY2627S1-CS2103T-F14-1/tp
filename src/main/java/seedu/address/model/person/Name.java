@@ -3,6 +3,8 @@ package seedu.address.model.person;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
+import java.util.Locale;
+
 /**
  * Represents a Person's name in the address book.
  * Guarantees: immutable; is valid as declared in {@link #isValidName(String)}
@@ -42,6 +44,19 @@ public class Name {
         return test.matches(VALIDATION_REGEX);
     }
 
+
+    /**
+     * Returns true if this name and {@code other} differ at most in letter case and spacing,
+     * such as "Alex Tan" and "alex  tan".
+     */
+    public boolean isEquivalentTo(Name other) {
+        requireNonNull(other);
+        return normalize(fullName).equals(normalize(other.fullName));
+    }
+
+    private static String normalize(String name) {
+        return name.trim().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
+    }
 
     @Override
     public String toString() {

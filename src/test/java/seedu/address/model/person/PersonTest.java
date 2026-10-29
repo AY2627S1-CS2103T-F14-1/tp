@@ -52,6 +52,27 @@ public class PersonTest {
     }
 
     @Test
+    public void isSamePerson_differentRoles_returnsFalse() {
+        Person student = new PersonBuilder().withName("Alex Tan").withTags("student", "S1").build();
+        Person guardian = new PersonBuilder().withName("Alex Tan").withTags("guardian", "G1").build();
+        Person otherStudent = new PersonBuilder().withName("Alex Tan").withTags("student", "S2").build();
+
+        assertFalse(student.isSamePerson(guardian));
+        assertTrue(student.isSamePerson(otherStudent));
+    }
+
+    @Test
+    public void isSimilarPerson() {
+        Person student = new PersonBuilder().withName("Alex Tan").withTags("student", "S1").build();
+
+        assertTrue(student.isSimilarPerson(student));
+        assertFalse(student.isSimilarPerson(null));
+        assertTrue(student.isSimilarPerson(new PersonBuilder().withName("alex  TAN").withTags("student").build()));
+        assertFalse(student.isSimilarPerson(new PersonBuilder().withName("alex tan").withTags("guardian").build()));
+        assertFalse(student.isSimilarPerson(new PersonBuilder().withName("Alex Tang").withTags("student").build()));
+    }
+
+    @Test
     public void equals() {
         // same values -> returns true
         Person aliceCopy = new PersonBuilder(ALICE).build();

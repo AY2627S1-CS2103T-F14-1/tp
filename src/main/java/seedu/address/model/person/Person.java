@@ -5,6 +5,7 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import seedu.address.commons.util.ToStringBuilder;
@@ -15,6 +16,8 @@ import seedu.address.model.tag.Tag;
  * Guarantees: details are present and not null, field values are validated, immutable.
  */
 public class Person {
+
+    private static final Set<String> ROLE_TAG_NAMES = Set.of("student", "guardian");
 
     // Identity fields
     private final Name name;
@@ -62,7 +65,8 @@ public class Person {
     }
 
     /**
-     * Returns true if both persons have the same name.
+     * Returns true if both persons have the same name and the same role (student, guardian or neither),
+     * so a student and a guardian may share a name.
      * This defines a weaker notion of equality between two persons.
      */
     public boolean isSamePerson(Person otherPerson) {
@@ -71,7 +75,33 @@ public class Person {
         }
 
         return otherPerson != null
-                && otherPerson.getName().equals(getName());
+                && otherPerson.getName().equals(getName())
+                && otherPerson.getRole().equals(getRole());
+    }
+
+    /**
+     * Returns true if both persons have the same role and names that differ at most in letter case and spacing,
+     * such as "Alex Tan" and "alex  tan". This is checked before adding or editing a contact, while saved data
+     * is only checked with {@link #isSamePerson(Person)} so that existing data files still load.
+     */
+    public boolean isSimilarPerson(Person otherPerson) {
+        if (otherPerson == this) {
+            return true;
+        }
+
+        return otherPerson != null
+                && otherPerson.getName().isEquivalentTo(getName())
+                && otherPerson.getRole().equals(getRole());
+    }
+
+    /**
+     * Returns the role tag of this person ({@code student} or {@code guardian}), or an empty Optional if it has none.
+     */
+    private Optional<String> getRole() {
+        return tags.stream()
+                .map(tag -> tag.tagName)
+                .filter(ROLE_TAG_NAMES::contains)
+                .findFirst();
     }
 
     /**
