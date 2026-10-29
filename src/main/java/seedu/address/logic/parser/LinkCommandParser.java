@@ -17,8 +17,8 @@ public class LinkCommandParser implements Parser<LinkCommand> {
         if (arguments.getPreamble().isEmpty() && arguments.getValue(PREFIX_STUDENT).isPresent()
                 && arguments.getValue(PREFIX_GUARDIAN).isPresent()) {
             arguments.verifyNoDuplicatePrefixesFor(PREFIX_STUDENT, PREFIX_GUARDIAN);
-            String studentValue = arguments.getValue(PREFIX_STUDENT).get();
-            String guardianValue = arguments.getValue(PREFIX_GUARDIAN).get();
+            String studentValue = ParserUtil.normalizeContactId(arguments.getValue(PREFIX_STUDENT).get());
+            String guardianValue = ParserUtil.normalizeContactId(arguments.getValue(PREFIX_GUARDIAN).get());
             if (StudentId.isValidStudentId(studentValue) && GuardianId.isValidGuardianId(guardianValue)) {
                 return new LinkCommand(new StudentId(studentValue), new GuardianId(guardianValue));
             }

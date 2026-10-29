@@ -61,6 +61,9 @@ TutorConnect is a **desktop application for tutors to manage student and guardia
 * Parameters can be in any order.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
+* Student and guardian IDs are not case-sensitive.<br>
+  For example, `delete s1` is interpreted as `delete S1`.
+
 * Extraneous parameters for commands that take no parameters, such as `help`, `list` and `exit`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
 

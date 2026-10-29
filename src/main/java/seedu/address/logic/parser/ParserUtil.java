@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,10 +13,12 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.Messages;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.guardian.GuardianId;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.student.StudentId;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -39,6 +42,20 @@ public class ParserUtil {
             throw new ParseException(MESSAGE_INVALID_INDEX);
         }
         return Index.fromOneBased(Integer.parseInt(trimmedIndex));
+    }
+
+    /**
+     * Returns {@code contactId} trimmed, with its {@code S} or {@code G} prefix upper-cased if it is otherwise a
+     * valid student or guardian ID, so that {@code s1} is read as {@code S1}. Other values are only trimmed.
+     */
+    public static String normalizeContactId(String contactId) {
+        requireNonNull(contactId);
+        String trimmedId = contactId.trim();
+        String upperCaseId = trimmedId.toUpperCase(Locale.ROOT);
+        if (StudentId.isValidStudentId(upperCaseId) || GuardianId.isValidGuardianId(upperCaseId)) {
+            return upperCaseId;
+        }
+        return trimmedId;
     }
 
     /**
