@@ -91,6 +91,11 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseName_repeatedInnerSpaces_returnsNameWithSingleSpaces() throws Exception {
+        assertEquals(new Name("Alex Tan Wei"), ParserUtil.parseName(" Alex  Tan \t Wei "));
+    }
+
+    @Test
     public void parsePhone_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> ParserUtil.parsePhone((String) null));
     }

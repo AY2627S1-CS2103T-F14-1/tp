@@ -17,6 +17,7 @@ import seedu.address.model.tag.Tag;
 /** Adds a guardian contact to TutorConnect. */
 public class AddGuardianCommand extends Command {
     public static final String COMMAND_WORD = "add-guardian";
+    public static final String MESSAGE_DUPLICATE_GUARDIAN = "A guardian with this name already exists.";
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Adds a guardian contact. Parameters: n/NAME p/PHONE\n"
             + "Example: " + COMMAND_WORD + " n/Alex Tan p/91234567";
 
@@ -33,9 +34,9 @@ public class AddGuardianCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
         Person candidate = new Person(name, phone, new Email("guardian@tutorconnect.com"),
-                new Address("Not provided"), Set.of());
-        if (model.hasPerson(candidate)) {
-            throw new CommandException("A contact with this name already exists.");
+                new Address("Not provided"), Set.of(new Tag("guardian")));
+        if (model.getAddressBook().getPersonList().stream().anyMatch(candidate::isSimilarPerson)) {
+            throw new CommandException(MESSAGE_DUPLICATE_GUARDIAN);
         }
         GuardianId guardianId = model.allocateGuardianId();
         Person guardian = new Person(name, phone, new Email("guardian@tutorconnect.com"),

@@ -87,6 +87,10 @@ Format: `add-student n/NAME p/PHONE_NUMBER`
 
 Example: `add-student n/Alex Tan p/91234567`
 
+<div markdown="span" class="alert alert-info">:information_source: **Note:**
+Two students cannot share a name, and neither can two guardians. Names that differ only in letter case or spacing, such as `Alex Tan` and `alex  tan`, count as the same name. A student and a guardian may share a name. Extra spaces inside a name are removed when it is saved.
+</div>
+
 ### Adding a guardian: `add-guardian`
 
 Adds a guardian and assigns the next permanent guardian ID (`G1`, `G2`, …).

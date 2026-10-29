@@ -163,6 +163,21 @@ public class JsonSerializableAddressBookTest {
         assertEquals(2, addressBook.getNextGuardianNumber());
     }
 
+    @Test
+    public void toModelType_namesDifferingOnlyInCaseOrRole_success() throws Exception {
+        // v1.5 accepted these, so they must still load even though new duplicates like them are now rejected
+        String persons = """
+                [{"name":"Alex Tan","phone":"91234567","email":"a@example.com","address":"One",
+                "tags":["student","S1"]},
+                {"name":"alex tan","phone":"91112222","email":"b@example.com","address":"Two",
+                "tags":["student","S2"]},
+                {"name":"Alex Tan","phone":"98887777","email":"c@example.com","address":"Three",
+                "tags":["guardian","G1"]}]
+                """;
+        AddressBook addressBook = readTutorConnectData(persons, "[]", 3, 2).toModelType();
+        assertEquals(3, addressBook.getPersonList().size());
+    }
+
     private JsonSerializableAddressBook readTutorConnectData(String persons, String links, int nextStudentNumber,
             int nextGuardianNumber) throws Exception {
         String json = "{\"persons\":" + persons + ",\"guardianLinks\":" + links
