@@ -163,6 +163,7 @@ The ID counters are saved so that IDs are never reused. For example, if `S3` is 
 `JsonAddressBookStorage#readAddressBook()` reads the file into a `JsonSerializableAddressBook`, and `JsonSerializableAddressBook#toModelType()` converts it back into a `Model` object. During conversion, the saved data is validated before it is accepted. The file is rejected if it contains:
 * duplicate contacts or duplicate contact IDs,
 * a contact with more than one contact ID,
+* a contact whose `student` or `guardian` tag does not match its ID (for example `student` with `G1`),
 * duplicate guardian links,
 * a guardian link that refers to a contact that does not exist, or
 * an ID counter that is not greater than every saved ID of that kind.
