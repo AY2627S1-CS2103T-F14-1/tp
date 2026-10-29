@@ -139,15 +139,15 @@ Examples:
 * `edit S1 p/91234567` changes student S1's phone number.
 * `edit G2 n/Amelia Tan p/92345678` changes guardian G2's name and phone number.
 
-### Finding contacts by name: `find`
+### Finding contacts: `find`
 
-Finds students and guardians whose names contain any of the given keywords. The result box lists each match with their ID, name, phone number, and linked contacts, in the same format as `list`.
+Finds students and guardians whose names, IDs or phone numbers match any of the given keywords. The result box lists each match with their ID, name, phone number, and linked contacts, in the same format as `list`.
 
 Format: `find KEYWORD [MORE_KEYWORDS]`
 
 * The search is case-insensitive; for example, `tan` matches `Tan`.
 * Keyword order does not matter; for example, `Tan Alex` matches `Alex Tan`.
-* The search considers only names.
+* A keyword matches a word in the name, the whole student or guardian ID (for example `S1` or `s1`), or the whole phone number (for example `91234567`).
 * Only full words match; for example, `Ale` does not match `Alex`.
 * Contacts matching at least one keyword are returned (an `OR` search); for example, `Ben Chloe` returns `Ben Lim` and `Chloe Ng`.
 * If nothing matches, TutorConnect shows `No students or guardians match your search.`
@@ -231,7 +231,7 @@ Action | Format, Examples
 **Delete** | `delete ID`<br> e.g., `delete S1`
 **Edit** | `edit ID [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS]`<br> e.g., `edit S1 n/James Lee`
 **Exit** | `exit`
-**Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find alex amelia`
+**Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find alex amelia`, `find S1 91234567`
 **List** | `list`
 **Link** | `link s/STUDENT_ID g/GUARDIAN_ID`<br> e.g., `link s/S1 g/G1`
 **Help** | `help`

@@ -15,17 +15,18 @@ import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.person.Person;
 
 /**
- * Finds and lists all TutorConnect students and guardians whose name contains any of the argument keywords,
- * with their relationships. Keyword matching is case insensitive.
+ * Finds and lists all TutorConnect students and guardians whose name, ID or phone number matches any of the
+ * argument keywords, with their relationships. Keyword matching is case insensitive.
  */
 public class FindCommand extends Command {
 
     public static final String COMMAND_WORD = "find";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all students and guardians whose names "
-            + "contain any of the specified keywords (case-insensitive) and lists them with their IDs.\n"
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all students and guardians whose names, "
+            + "IDs or phone numbers match any of the specified keywords (case-insensitive) and lists them "
+            + "with their IDs.\n"
             + "Parameters: KEYWORD [MORE_KEYWORDS]...\n"
-            + "Example: " + COMMAND_WORD + " alex amelia";
+            + "Example: " + COMMAND_WORD + " alex amelia S3 91234567";
 
     public static final String MESSAGE_NO_MATCHES = "No students or guardians match your search.";
     public static final String MESSAGE_SUMMARY = "Found %1$s and %2$s.";
