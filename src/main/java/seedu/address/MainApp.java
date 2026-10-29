@@ -1,6 +1,7 @@
 package seedu.address;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -78,10 +79,39 @@ public class MainApp extends Application {
         } catch (DataLoadingException e) {
             logger.warning("Data file at " + storage.getAddressBookFilePath() + " could not be loaded."
                     + " Will be starting with an empty TutorConnect workspace.");
+            backUpUnreadableDataFile(storage.getAddressBookFilePath());
             initialData = new AddressBook();
         }
 
         return new ModelManager(initialData, userPrefs);
+    }
+
+    /**
+     * Copies a data file that could not be loaded to a file beside it with {@code .bak} added to its name
+     * (or {@code .bak1}, {@code .bak2} and so on if that name holds different content), so that the next save
+     * does not destroy the user's data. An existing backup with identical content is reused.
+     *
+     * @return the backup file, or empty if there is no data file to back up or the copy failed
+     */
+    static Optional<Path> backUpUnreadableDataFile(Path dataFile) {
+        if (!Files.isRegularFile(dataFile)) {
+            return Optional.empty();
+        }
+        try {
+            Path backup = dataFile.resolveSibling(dataFile.getFileName() + ".bak");
+            for (int attempt = 1; Files.exists(backup); attempt++) {
+                if (Files.mismatch(backup, dataFile) == -1) {
+                    return Optional.of(backup);
+                }
+                backup = dataFile.resolveSibling(dataFile.getFileName() + ".bak" + attempt);
+            }
+            Files.copy(dataFile, backup);
+            logger.warning("Saved a copy of the unreadable data file as " + backup);
+            return Optional.of(backup);
+        } catch (IOException e) {
+            logger.warning("Could not back up the unreadable data file " + dataFile + ": " + e.getMessage());
+            return Optional.empty();
+        }
     }
 
     /** Returns saved data when available, otherwise an empty TutorConnect workspace. */

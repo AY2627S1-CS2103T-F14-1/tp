@@ -204,7 +204,7 @@ TutorConnect data is saved automatically as a JSON file `[JAR file location]/dat
 Advanced users are welcome to update data directly by editing that data file.
 
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
-If your changes make the data file invalid, TutorConnect starts with an empty workspace at the next run. The invalid file remains on disk until you run a command (TutorConnect saves after every command). Still, we recommend backing up the file before editing it.<br>
+If your changes make the data file invalid, TutorConnect starts with an empty workspace at the next run. The invalid file remains on disk until you run a command (TutorConnect saves after every command), but TutorConnect first saves a copy of it beside the original as `tutorconnect.json.bak` (or `.bak1`, `.bak2` and so on if that name is taken) so you can recover your contacts. We still recommend backing up the file before editing it.<br>
 Furthermore, certain edits can cause TutorConnect to behave unexpectedly (for example, if a value is outside the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
 </div>
 
