@@ -101,6 +101,8 @@ Example: `add-guardian n/Amelia Tan p/92345678`
 
 Links existing contacts using their IDs. A guardian can be linked to more than one student.
 
+* Like `add-student`, `add-guardian`, `edit` and `delete`, a successful `link` clears any filter left by a previous `find`, so the contact list shows everyone again.
+
 Format: `link s/STUDENT_ID g/GUARDIAN_ID`
 
 Example: `link s/S1 g/G1`
