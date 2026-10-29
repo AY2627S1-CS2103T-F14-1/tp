@@ -93,11 +93,12 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
-     * Removes {@code key} from this {@code AddressBook}.
+     * Removes {@code key} and its related guardian links from this {@code AddressBook}.
      * {@code key} must exist in the address book.
      */
     public void removePerson(Person key) {
         persons.remove(key);
+        key.getTags().forEach(tag -> removeLinksInvolving(tag.tagName));
     }
 
     /** Deletes a TutorConnect contact and its related guardian links. */
@@ -108,15 +109,22 @@ public class AddressBook implements ReadOnlyAddressBook {
         if (contact == null) {
             return false;
         }
-        persons.remove(contact);
+        removePerson(contact);
+        return true;
+    }
+
+    /**
+     * Removes every guardian link involving {@code contactId}.
+     * Does nothing if {@code contactId} is not a student or guardian ID.
+     */
+    private void removeLinksInvolving(String contactId) {
         if (StudentId.isValidStudentId(contactId)) {
             StudentId studentId = new StudentId(contactId);
             guardianLinks.removeIf(link -> link.involves(studentId));
-        } else {
+        } else if (GuardianId.isValidGuardianId(contactId)) {
             GuardianId guardianId = new GuardianId(contactId);
             guardianLinks.removeIf(link -> link.involves(guardianId));
         }
-        return true;
     }
 
     /** Allocates the next stable student identifier. */
