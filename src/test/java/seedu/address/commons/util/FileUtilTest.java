@@ -3,10 +3,13 @@ package seedu.address.commons.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
@@ -64,5 +67,22 @@ public class FileUtilTest {
         Path file = testFolder.resolve("missing").resolve("data.json");
 
         assertThrows(IOException.class, () -> FileUtil.writeToFile(file, "hello"));
+    }
+
+    @Test
+    public void writeToFile_unwritableDirectory_throwsAccessDeniedNamingTheDataFile() throws IOException {
+        Path directory = Files.createDirectory(testFolder.resolve("readonly"));
+        Path file = directory.resolve("data.json");
+        Files.setPosixFilePermissions(directory, PosixFilePermissions.fromString("r-xr-xr-x"));
+        try {
+            assumeFalse(Files.isWritable(directory)); // for example when the tests run as an administrator
+
+            AccessDeniedException exception = assertThrows(AccessDeniedException.class, () ->
+                    FileUtil.writeToFile(file, "hello"));
+
+            assertEquals(file.toString(), exception.getMessage());
+        } finally {
+            Files.setPosixFilePermissions(directory, PosixFilePermissions.fromString("rwxr-xr-x"));
+        }
     }
 }
