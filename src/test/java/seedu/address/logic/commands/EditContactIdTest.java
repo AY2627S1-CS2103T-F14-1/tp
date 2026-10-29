@@ -33,4 +33,23 @@ public class EditContactIdTest {
         assertThrows(CommandException.class, () -> parser.parseCommand("edit G9 n/Carol").execute(model));
         assertThrows(CommandException.class, () -> parser.parseCommand("edit G1 t/replacement").execute(model));
     }
+
+    @Test
+    public void lowerCaseIds_areAcceptedByLinkEditAndDelete() throws Exception {
+        Model model = new ModelManager(new AddressBook(), new UserPrefs());
+        AddressBookParser parser = new AddressBookParser();
+        parser.parseCommand("add-student n/Alice p/91234567").execute(model);
+        parser.parseCommand("add-guardian n/Bob p/92345678").execute(model);
+
+        assertEquals("Linked G1 to S1.", parser.parseCommand("link s/s1 g/g1").execute(model).getFeedbackToUser());
+        parser.parseCommand("edit s1 p/93456789").execute(model);
+        var student = model.getAddressBook().getPersonList().stream()
+                .filter(person -> ContactOrder.getContactId(person).orElse("").equals("S1"))
+                .findFirst().orElseThrow();
+        assertEquals("93456789", student.getPhone().value);
+
+        parser.parseCommand("delete g1").execute(model);
+        assertEquals(1, model.getAddressBook().getPersonList().size());
+        assertEquals(0, model.getGuardianLinks().size());
+    }
 }

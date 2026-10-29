@@ -204,4 +204,19 @@ public class ParserUtilTest {
 
         assertEquals(expectedTagSet, actualTagSet);
     }
+
+    @Test
+    public void normalizeContactId_lowerCaseId_returnsUpperCaseId() {
+        assertEquals("S1", ParserUtil.normalizeContactId("s1"));
+        assertEquals("G12", ParserUtil.normalizeContactId(" g12 "));
+        assertEquals("S3", ParserUtil.normalizeContactId("S3"));
+    }
+
+    @Test
+    public void normalizeContactId_notAnId_returnsTrimmedValue() {
+        assertEquals("1", ParserUtil.normalizeContactId(" 1 "));
+        assertEquals("s0", ParserUtil.normalizeContactId("s0"));
+        assertEquals("x1", ParserUtil.normalizeContactId("x1"));
+        assertEquals("", ParserUtil.normalizeContactId("  "));
+    }
 }

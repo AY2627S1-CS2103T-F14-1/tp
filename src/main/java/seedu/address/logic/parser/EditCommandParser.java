@@ -36,7 +36,7 @@ public class EditCommandParser implements Parser<EditCommand> {
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG);
 
-        String target = argMultimap.getPreamble().trim();
+        String target = ParserUtil.normalizeContactId(argMultimap.getPreamble());
         boolean isContactId = StudentId.isValidStudentId(target) || GuardianId.isValidGuardianId(target);
         Index index = null;
         if (!isContactId) {

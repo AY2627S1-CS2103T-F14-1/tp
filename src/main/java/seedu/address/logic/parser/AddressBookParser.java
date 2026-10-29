@@ -76,7 +76,7 @@ public class AddressBookParser {
     }
 
     private Command parseDeleteCommand(String arguments) throws ParseException {
-        String contactId = arguments.trim();
+        String contactId = ParserUtil.normalizeContactId(arguments);
         if (StudentId.isValidStudentId(contactId) || GuardianId.isValidGuardianId(contactId)) {
             return new DeleteContactCommand(contactId);
         }
