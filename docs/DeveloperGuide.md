@@ -231,6 +231,32 @@ The sequence diagram below shows how `find tan` is executed.
   * Pros: Faster to type when a tutor remembers only part of a name.
   * Cons: Short keywords can match many contacts.
 
+### Delete contacts feature
+
+TutorConnect deletes a contact in two ways: by ID (`delete S1`) and by the index shown in the list (`delete 1`). `AddressBookParser` creates a `DeleteContactCommand` if the argument is a valid student or guardian ID, and a `DeleteCommand` otherwise. Either way, the contact's guardian links are deleted along with it.
+
+The sequence diagram below shows how the `Model` handles `delete S1` for a student `s` with ID `S1`.
+
+![Interactions inside the Model for the `delete S1` Command](images/DeleteContactSequenceDiagram.png)
+
+1. `DeleteContactCommand#execute()` calls `Model#deleteContact("S1")`. If no contact has that ID, the command fails with `No contact exists with ID S1.`
+1. `AddressBook#deleteContact()` finds the contact whose tags include `S1`, then calls `AddressBook#removePerson()` on it.
+1. `removePerson()` removes the contact from the `UniquePersonList`. It then calls `removeLinksInvolving()` with each of the contact's tags. Tags that are student or guardian IDs remove every `GuardianLink` that involves that ID, and other tags such as `student` are ignored.
+1. `ModelManager` clears the find filter, so the list shows all contacts again.
+
+`delete 1` takes a shorter path: `DeleteCommand` gets the contact at index 1 of the displayed list and calls `Model#deletePerson()`, which also calls `AddressBook#removePerson()`. Both commands therefore delete links in the same way.
+
+#### Design considerations:
+
+**Aspect: Where links are deleted:**
+
+* **Alternative 1 (current choice):** `AddressBook#removePerson()` deletes the contact's links, and every delete path calls it.
+  * Pros: A new way of deleting a contact cannot leave dangling links behind, because the only method that removes a contact also removes its links.
+  * Cons: `removePerson()` depends on the contact's ID being stored as a tag.
+* **Alternative 2:** Each command deletes the links itself after deleting the contact.
+  * Pros: The model methods stay simple.
+  * Cons: It is easy to forget in a new command. Before v1.5, `delete 1` did exactly that and left links to a missing contact in the data file. The file then failed to load on the next launch, and TutorConnect started with an empty workspace.
+
 ## **Documentation, logging, testing, dev-ops**
 
 * [Documentation guide](Documentation.md)
@@ -431,6 +457,16 @@ testers are expected to do more *exploratory* testing.
 
    1. Other incorrect delete commands to try: `delete`, `delete s1`, `delete X1`.<br>
       Expected: The command is rejected with an error message and existing contacts are unchanged.
+
+1. Deleting a linked student by index
+
+   1. Prerequisites: Add student `S1`, add guardian `G1`, link them using `link s/S1 g/G1`, and list all contacts using `list`.
+
+   1. Test case: `delete 1`<br>
+      Expected: Student S1 is deleted. `list` shows guardian G1 with no linked students.
+
+   1. Test case: exit and relaunch the app after the previous test case.<br>
+      Expected: TutorConnect loads guardian G1 with no linked students.
 
 ### Saving data
 
