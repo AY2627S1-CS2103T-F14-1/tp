@@ -405,36 +405,32 @@ testers are expected to do more *exploratory* testing.
 
 1. Initial launch
 
-   1. Download the JAR file and copy it into an empty folder.
+   1. Download the JAR file and copy it into an empty, writable folder.
 
-   1. Double-click the JAR file.<br>
-      Expected: The GUI opens with a set of sample contacts. The window size may not be optimal.
+   1. Run `java -jar "TutorConnect-v1.5.jar"` from a terminal using Java 25.<br>
+      Expected: TutorConnect opens with an empty contact list. A `data` folder is created after the first successful command.
 
 1. Saving window preferences
 
    1. Resize the window to an optimal size. Move the window to a different location. Close the window.
 
-   1. Relaunch the app by double-clicking the JAR file.<br>
+   1. Relaunch the JAR from the same folder.<br>
        Expected: The most recent window size and location are retained.
 
-1. _{ more test cases …​ }_
+### Deleting a contact
 
-### Deleting a person
+1. Deleting a linked student
 
-1. Deleting a person while all persons are being shown
+   1. Prerequisites: Add student `S1`, add guardian `G1`, and link them using `link s/S1 g/G1`.
 
-   1. Prerequisites: List all persons using the `list` command, with multiple persons in the list.
+   1. Test case: `delete S1`<br>
+      Expected: Student S1 is deleted and its link to guardian G1 is removed.
 
-   1. Test case: `delete 1`<br>
-      Expected: The first contact is deleted from the list. The status message shows the deleted contact's details.
+   1. Test case: `delete S9`<br>
+      Expected: No contact is deleted. The status message says that no contact exists with ID S9.
 
-   1. Test case: `delete 0`<br>
-      Expected: No person is deleted. The status message shows error details.
-
-   1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)<br>
-      Expected: Similar to previous.
-
-1. _{ more test cases …​ }_
+   1. Other incorrect delete commands to try: `delete`, `delete s1`, `delete X1`.<br>
+      Expected: The command is rejected with an error message and existing contacts are unchanged.
 
 ### Saving data
 
