@@ -107,6 +107,13 @@ public class AddressBookParserTest {
     }
 
     @Test
+    public void parseCommand_commandWordInUpperCase_success() throws Exception {
+        assertTrue(parser.parseCommand("HELP") instanceof HelpCommand);
+        assertTrue(parser.parseCommand("List") instanceof ListCommand);
+        assertTrue(parser.parseCommand("EXIT") instanceof ExitCommand);
+    }
+
+    @Test
     public void parseCommand_unrecognisedInput_throwsParseException() {
         assertThrows(ParseException.class, String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE), ()
             -> parser.parseCommand(""));
