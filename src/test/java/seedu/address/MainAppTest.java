@@ -18,8 +18,8 @@ import seedu.address.storage.StorageManager;
 public class MainAppTest {
 
     @Test
-    public void version_isV13() {
-        assertEquals("V1.3", MainApp.VERSION);
+    public void version_isV15() {
+        assertEquals("V1.5", MainApp.VERSION);
     }
 
     @Test
