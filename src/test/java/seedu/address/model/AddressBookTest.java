@@ -18,8 +18,11 @@ import org.junit.jupiter.api.Test;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seedu.address.model.guardian.GuardianId;
+import seedu.address.model.link.GuardianLink;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
+import seedu.address.model.student.StudentId;
 import seedu.address.testutil.PersonBuilder;
 
 public class AddressBookTest {
@@ -93,6 +96,33 @@ public class AddressBookTest {
         Person editedAlice = new PersonBuilder(ALICE).withAddress(VALID_ADDRESS_BOB).withTags(VALID_TAG_HUSBAND)
                 .build();
         assertTrue(addressBook.hasPerson(editedAlice));
+    }
+
+    @Test
+    public void removePerson_linkedStudent_removesOnlyItsLinks() {
+        Person student1 = new PersonBuilder().withName("Alex Tan").withTags("student", "S1").build();
+        Person student2 = new PersonBuilder().withName("Ben Lim").withTags("student", "S2").build();
+        Person guardian = new PersonBuilder().withName("Amelia Tan").withTags("guardian", "G1").build();
+        addressBook.setPersons(List.of(student1, student2, guardian));
+        GuardianLink keptLink = new GuardianLink(new StudentId("S2"), new GuardianId("G1"));
+        addressBook.addGuardianLink(new GuardianLink(new StudentId("S1"), new GuardianId("G1")));
+        addressBook.addGuardianLink(keptLink);
+
+        addressBook.removePerson(student1);
+
+        assertEquals(List.of(keptLink), addressBook.getGuardianLinks());
+    }
+
+    @Test
+    public void removePerson_linkedGuardian_removesItsLinks() {
+        Person student = new PersonBuilder().withName("Alex Tan").withTags("student", "S1").build();
+        Person guardian = new PersonBuilder().withName("Amelia Tan").withTags("guardian", "G1").build();
+        addressBook.setPersons(List.of(student, guardian));
+        addressBook.addGuardianLink(new GuardianLink(new StudentId("S1"), new GuardianId("G1")));
+
+        addressBook.removePerson(guardian);
+
+        assertEquals(List.of(), addressBook.getGuardianLinks());
     }
 
     @Test
