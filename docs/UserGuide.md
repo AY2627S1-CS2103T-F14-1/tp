@@ -61,7 +61,7 @@ TutorConnect is a **desktop application for tutors to manage student and guardia
 * Parameters can be in any order.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `list`, `exit`, and `clear`, are ignored.<br>
+* Extraneous parameters for commands that take no parameters, such as `help`, `list` and `exit`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
@@ -181,9 +181,12 @@ Example: `delete S1` deletes student S1 and its guardian links.
 
 ### Clearing all entries: `clear`
 
-Clears all students, guardians and links from TutorConnect. This takes effect immediately and cannot be undone. Student and guardian IDs are not reused afterwards.
+Clears all students, guardians and links from TutorConnect. This cannot be undone, so TutorConnect asks you to confirm first. Student and guardian IDs are not reused afterwards.
 
-Format: `clear`
+Format: `clear` to see what would be deleted, then `clear confirm` to delete it
+
+* `clear` on its own deletes nothing. It shows how many students and guardians would be lost and reminds you to type `clear confirm`.
+* Any other text after `clear` also deletes nothing.
 
 ### Exiting the program: `exit`
 
@@ -229,7 +232,7 @@ Action | Format, Examples
 --------|------------------
 **Add student** | `add-student n/NAME p/PHONE_NUMBER`<br> e.g., `add-student n/Alex Tan p/91234567`
 **Add guardian** | `add-guardian n/NAME p/PHONE_NUMBER`<br> e.g., `add-guardian n/Amelia Tan p/92345678`
-**Clear** | `clear`
+**Clear** | `clear`, then `clear confirm`
 **Delete** | `delete ID`<br> e.g., `delete S1`
 **Edit** | `edit ID [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS]`<br> e.g., `edit S1 n/James Lee`
 **Exit** | `exit`
