@@ -121,6 +121,15 @@ public class AddressBookParserTest {
     }
 
     @Test
+    public void parseCommand_nameWithPunctuationOrSonOf_success() throws Exception {
+        assertTrue(parser.parseCommand("add-student n/Tan Wei Ming s/o Tan Ah Kow p/91234567")
+                instanceof AddStudentCommand);
+        assertTrue(parser.parseCommand("add-guardian n/Siti d/o Rahman p/92345678") instanceof AddGuardianCommand);
+        assertTrue(parser.parseCommand("add-student n/Mary-Jane O'Brien p/91234567") instanceof AddStudentCommand);
+        assertTrue(parser.parseCommand("edit S1 n/Kumar s/o Raju") instanceof EditCommand);
+    }
+
+    @Test
     public void parseCommand_commandWordInUpperCase_success() throws Exception {
         assertTrue(parser.parseCommand("HELP") instanceof HelpCommand);
         assertTrue(parser.parseCommand("List") instanceof ListCommand);
