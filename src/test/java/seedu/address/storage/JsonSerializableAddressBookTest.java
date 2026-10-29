@@ -104,6 +104,40 @@ public class JsonSerializableAddressBookTest {
     }
 
     @Test
+    public void toModelType_studentTagOnGuardianId_throwsIllegalValueException() throws Exception {
+        JsonSerializableAddressBook dataFromFile = readTutorConnectData("""
+                [{"name":"Alex Tan","phone":"91234567","email":"a@example.com","address":"One",
+                "tags":["student","G1"]}]
+                """, "[]", 1, 2);
+
+        assertThrows(IllegalValueException.class, JsonSerializableAddressBook.MESSAGE_ROLE_MISMATCH,
+                dataFromFile::toModelType);
+    }
+
+    @Test
+    public void toModelType_guardianTagOnStudentId_throwsIllegalValueException() throws Exception {
+        JsonSerializableAddressBook dataFromFile = readTutorConnectData("""
+                [{"name":"Alex Tan","phone":"91234567","email":"a@example.com","address":"One",
+                "tags":["guardian","S1"]}]
+                """, "[]", 2, 1);
+
+        assertThrows(IllegalValueException.class, JsonSerializableAddressBook.MESSAGE_ROLE_MISMATCH,
+                dataFromFile::toModelType);
+    }
+
+    @Test
+    public void toModelType_matchingRoleTags_success() throws Exception {
+        JsonSerializableAddressBook dataFromFile = readTutorConnectData("""
+                [{"name":"Alex Tan","phone":"91234567","email":"a@example.com","address":"One",
+                "tags":["student","S1"]},
+                {"name":"Amelia Tan","phone":"92345678","email":"b@example.com","address":"Two",
+                "tags":["guardian","G1"]}]
+                """, "[]", 2, 2);
+
+        assertEquals(2, dataFromFile.toModelType().getPersonList().size());
+    }
+
+    @Test
     public void toModelType_invalidNextId_throwsIllegalValueException() throws Exception {
         JsonSerializableAddressBook dataFromFile = readTutorConnectData(TUTOR_CONNECT_PERSONS,
                 """

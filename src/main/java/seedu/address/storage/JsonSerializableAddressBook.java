@@ -27,9 +27,14 @@ class JsonSerializableAddressBook {
     public static final String MESSAGE_DUPLICATE_PERSON = "Persons list contains duplicate person(s).";
     public static final String MESSAGE_DUPLICATE_CONTACT_ID = "Persons list contains duplicate contact ID(s).";
     public static final String MESSAGE_INVALID_CONTACT_ID = "A person has more than one TutorConnect contact ID.";
+    public static final String MESSAGE_ROLE_MISMATCH =
+            "A person's student or guardian tag does not match its TutorConnect contact ID.";
     public static final String MESSAGE_DUPLICATE_LINK = "Guardian links contain duplicate link(s).";
     public static final String MESSAGE_DANGLING_LINK = "Guardian link refers to a missing contact.";
     public static final String MESSAGE_INVALID_NEXT_ID = "The next contact ID must be greater than all saved IDs.";
+
+    private static final String STUDENT_ROLE_TAG = "student";
+    private static final String GUARDIAN_ROLE_TAG = "guardian";
 
     private final List<JsonAdaptedPerson> persons = new ArrayList<>();
     private final List<JsonAdaptedGuardianLink> guardianLinks = new ArrayList<>();
@@ -109,6 +114,10 @@ class JsonSerializableAddressBook {
                 continue;
             }
             String contactId = contactIds.get(0);
+            String conflictingRoleTag = StudentId.isValidStudentId(contactId) ? GUARDIAN_ROLE_TAG : STUDENT_ROLE_TAG;
+            if (person.getTags().stream().anyMatch(tag -> tag.tagName.equals(conflictingRoleTag))) {
+                throw new IllegalValueException(MESSAGE_ROLE_MISMATCH);
+            }
             Set<String> contactIdsForRole = StudentId.isValidStudentId(contactId) ? studentIds : guardianIds;
             if (!contactIdsForRole.add(contactId)) {
                 throw new IllegalValueException(MESSAGE_DUPLICATE_CONTACT_ID);
