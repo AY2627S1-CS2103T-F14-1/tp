@@ -19,8 +19,12 @@ TutorConnect is a **desktop application for tutors to manage student and guardia
 
 1. Copy the file to the folder you want to use as the _home folder_ for TutorConnect.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar TutorConnect-v1.3.jar`.<br>
+1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar TutorConnect-v1.5.jar` (use the name of the file you downloaded).<br>
    A TutorConnect window should appear in a few seconds with an empty contact list.
+
+   <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
+   Launch the app from a terminal as shown above, as double-clicking the JAR file may fail on some systems. Use a folder you can write to: TutorConnect saves its data next to the JAR file, so it may fail to start or to save from a write-protected folder.
+   </div>
 
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
@@ -156,7 +160,7 @@ G1 Amelia Tan, 92345678 (students: S1, S2)
 
 ### Deleting a contact: `delete`
 
-Deletes the specified person from the address book.
+Deletes the specified student or guardian from TutorConnect.
 
 Format: `delete ID` or `delete INDEX`
 
@@ -170,7 +174,7 @@ Example: `delete S1` deletes student S1 and its guardian links.
 
 ### Clearing all entries: `clear`
 
-Clears all entries from the address book.
+Clears all students, guardians and links from TutorConnect. This takes effect immediately and cannot be undone. Student and guardian IDs are not reused afterwards.
 
 Format: `clear`
 
@@ -207,6 +211,8 @@ Furthermore, certain edits can cause TutorConnect to behave unexpectedly (for ex
 
 1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
 2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
+3. **On macOS, if the app is in full-screen mode**, secondary windows such as the Help Window may not appear correctly. Leave full-screen mode before using `help`.
+4. **Names and phone numbers are checked loosely.** Names accept only letters, digits and spaces, and phone numbers accept only digits (at least 3). Symbols such as `'`, `-`, `/` and `+` are rejected for now.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -219,6 +225,7 @@ Action | Format, Examples
 **Clear** | `clear`
 **Delete** | `delete ID`<br> e.g., `delete S1`
 **Edit** | `edit ID [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS]`<br> e.g., `edit S1 n/James Lee`
+**Exit** | `exit`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find alex amelia`
 **List** | `list`
 **Link** | `link s/STUDENT_ID g/GUARDIAN_ID`<br> e.g., `link s/S1 g/G1`
