@@ -18,6 +18,9 @@ public class LinkCommand extends Command {
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Links a guardian to a student. Parameters: s/STUDENT_ID g/GUARDIAN_ID\n"
             + "Example: " + COMMAND_WORD + " s/S1 g/G1";
+    public static final String MESSAGE_WRONG_ID_TYPES =
+            "s/ takes a student ID (e.g. S1) and g/ takes a guardian ID (e.g. G1).";
+    public static final String MESSAGE_MISSING_CONTACT = "No contact exists with ID %1$s.";
 
     private final StudentId studentId;
     private final GuardianId guardianId;
@@ -31,8 +34,10 @@ public class LinkCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-        if (!model.hasContact(studentId.toString()) || !model.hasContact(guardianId.toString())) {
-            throw new CommandException("Both the student and guardian IDs must exist.");
+        for (String contactId : new String[] {studentId.toString(), guardianId.toString()}) {
+            if (!model.hasContact(contactId)) {
+                throw new CommandException(String.format(MESSAGE_MISSING_CONTACT, contactId));
+            }
         }
         try {
             model.addGuardianLink(new GuardianLink(studentId, guardianId));

@@ -23,6 +23,12 @@ public class ContactOrder {
             .thenComparingInt(String::length)
             .thenComparing(Comparator.naturalOrder());
 
+    /** Address stored for contacts added without one; the UI hides it. */
+    public static final String PLACEHOLDER_ADDRESS = "Not provided";
+    /** Emails stored for students and guardians added without one; the UI hides them. */
+    public static final String PLACEHOLDER_STUDENT_EMAIL = "student@tutorconnect.com";
+    public static final String PLACEHOLDER_GUARDIAN_EMAIL = "guardian@tutorconnect.com";
+
     /** Orders contacts deterministically; contacts without an ID compare equal and keep their order. */
     public static final Comparator<Person> COMPARATOR = Comparator.comparing(
             ContactOrder::getContactId, (first, second) -> first.isEmpty() || second.isEmpty()
@@ -50,6 +56,12 @@ public class ContactOrder {
     /** Returns true if {@code person} is a guardian. */
     public static boolean isGuardian(Person person) {
         return getContactId(person).filter(GuardianId::isValidGuardianId).isPresent();
+    }
+
+    /** Returns true if {@code value} is a placeholder stored for a field the user never entered. */
+    public static boolean isPlaceholder(String value) {
+        return value.equals(PLACEHOLDER_ADDRESS) || value.equals(PLACEHOLDER_STUDENT_EMAIL)
+                || value.equals(PLACEHOLDER_GUARDIAN_EMAIL);
     }
 
     private static int groupOf(String contactId) {

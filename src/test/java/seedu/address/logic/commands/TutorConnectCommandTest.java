@@ -1,6 +1,7 @@
 package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -64,5 +65,21 @@ public class TutorConnectCommandTest {
         assertEquals("Deleted contact S1 and its relationships.", deleteResult.getFeedbackToUser());
         assertEquals(0, model.getGuardianLinks().size());
         assertEquals("Added student S2: Bella Lim", nextStudent.getFeedbackToUser());
+    }
+
+    @Test
+    public void execute_linkMissingContact_namesMissingId() throws CommandException {
+        ModelManager model = new ModelManager();
+        new AddStudentCommand(new Name("Alex Tan"), new Phone("91234567")).execute(model);
+        new AddGuardianCommand(new Name("Amelia Tan"), new Phone("92345678")).execute(model);
+
+        CommandException missingStudent = assertThrows(CommandException.class, () ->
+                new LinkCommand(new StudentId("S9"), new GuardianId("G1")).execute(model));
+        CommandException missingGuardian = assertThrows(CommandException.class, () ->
+                new LinkCommand(new StudentId("S1"), new GuardianId("G9")).execute(model));
+
+        assertEquals("No contact exists with ID S9.", missingStudent.getMessage());
+        assertEquals("No contact exists with ID G9.", missingGuardian.getMessage());
+        assertEquals(0, model.getGuardianLinks().size());
     }
 }

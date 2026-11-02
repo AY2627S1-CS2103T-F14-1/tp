@@ -1,5 +1,7 @@
 package seedu.address.ui;
 
+import java.util.List;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
@@ -8,6 +10,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Region;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.model.link.GuardianLink;
 import seedu.address.model.person.Person;
 
 /**
@@ -20,13 +23,22 @@ public class PersonListPanel extends UiPart<Region> {
     @FXML
     private ListView<Person> personListView;
 
+    private final Supplier<List<GuardianLink>> guardianLinks;
+
     /**
-     * Creates a {@code PersonListPanel} with the given {@code ObservableList}.
+     * Creates a {@code PersonListPanel} with the given {@code ObservableList},
+     * reading guardian links from {@code guardianLinks} whenever a card is drawn.
      */
-    public PersonListPanel(ObservableList<Person> personList) {
+    public PersonListPanel(ObservableList<Person> personList, Supplier<List<GuardianLink>> guardianLinks) {
         super(FXML);
+        this.guardianLinks = guardianLinks;
         personListView.setItems(personList);
         personListView.setCellFactory(listView -> new PersonListViewCell());
+    }
+
+    /** Redraws every card, e.g. after a command changes guardian links but not the contacts themselves. */
+    public void refresh() {
+        personListView.refresh();
     }
 
     /**
@@ -41,7 +53,7 @@ public class PersonListPanel extends UiPart<Region> {
                 setGraphic(null);
                 setText(null);
             } else {
-                setGraphic(new PersonCard(person, getIndex() + 1).getRoot());
+                setGraphic(new PersonCard(person, getIndex() + 1, guardianLinks.get()).getRoot());
             }
         }
     }
