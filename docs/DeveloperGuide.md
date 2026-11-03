@@ -434,7 +434,7 @@ testers are expected to do more *exploratory* testing.
 
    1. Download the JAR file and copy it into an empty, writable folder.
 
-   1. Run `java -jar "TutorConnect-v1.5.jar"` from a terminal using Java 25.<br>
+   1. Run `java -jar "TutorConnect-v1.6.jar"` from a terminal using Java 25.<br>
       Expected: TutorConnect opens with an empty contact list. A `data` folder is created after the first successful command.
 
 1. Saving window preferences
