@@ -7,6 +7,7 @@ import java.util.Set;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.ContactOrder;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
@@ -33,14 +34,15 @@ public class AddStudentCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-        Person candidate = new Person(name, phone, new Email("student@tutorconnect.com"),
-                new Address("Not provided"), Set.of(new Tag("student")));
+        Person candidate = new Person(name, phone, new Email(ContactOrder.PLACEHOLDER_STUDENT_EMAIL),
+                new Address(ContactOrder.PLACEHOLDER_ADDRESS), Set.of(new Tag("student")));
         if (model.getAddressBook().getPersonList().stream().anyMatch(candidate::isSimilarPerson)) {
             throw new CommandException(MESSAGE_DUPLICATE_STUDENT);
         }
         StudentId studentId = model.allocateStudentId();
-        Person student = new Person(name, phone, new Email("student@tutorconnect.com"),
-                new Address("Not provided"), Set.of(new Tag("student"), new Tag(studentId.toString())));
+        Person student = new Person(name, phone, new Email(ContactOrder.PLACEHOLDER_STUDENT_EMAIL),
+                new Address(ContactOrder.PLACEHOLDER_ADDRESS),
+                Set.of(new Tag("student"), new Tag(studentId.toString())));
         model.addPerson(student);
         return new CommandResult("Added student " + studentId + ": " + name);
     }

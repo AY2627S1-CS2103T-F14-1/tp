@@ -58,4 +58,18 @@ public class ContactOrderTest {
         ids.sort(ContactOrder.ID_COMPARATOR);
         assertEquals(List.of("S2", "S10", "S99999999999999999999", "G1", "G2"), ids);
     }
+
+    @Test
+    public void isPlaceholder_storedDefaults_returnsTrue() {
+        assertTrue(ContactOrder.isPlaceholder(ContactOrder.PLACEHOLDER_ADDRESS));
+        assertTrue(ContactOrder.isPlaceholder(ContactOrder.PLACEHOLDER_STUDENT_EMAIL));
+        assertTrue(ContactOrder.isPlaceholder(ContactOrder.PLACEHOLDER_GUARDIAN_EMAIL));
+    }
+
+    @Test
+    public void isPlaceholder_userEnteredValues_returnsFalse() {
+        assertFalse(ContactOrder.isPlaceholder("alex@example.com"));
+        assertFalse(ContactOrder.isPlaceholder("Blk 123 Clementi Ave 3"));
+        assertFalse(ContactOrder.isPlaceholder("not provided"));
+    }
 }

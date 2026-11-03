@@ -8,6 +8,7 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.guardian.GuardianId;
 import seedu.address.model.person.Address;
+import seedu.address.model.person.ContactOrder;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
@@ -33,14 +34,15 @@ public class AddGuardianCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-        Person candidate = new Person(name, phone, new Email("guardian@tutorconnect.com"),
-                new Address("Not provided"), Set.of(new Tag("guardian")));
+        Person candidate = new Person(name, phone, new Email(ContactOrder.PLACEHOLDER_GUARDIAN_EMAIL),
+                new Address(ContactOrder.PLACEHOLDER_ADDRESS), Set.of(new Tag("guardian")));
         if (model.getAddressBook().getPersonList().stream().anyMatch(candidate::isSimilarPerson)) {
             throw new CommandException(MESSAGE_DUPLICATE_GUARDIAN);
         }
         GuardianId guardianId = model.allocateGuardianId();
-        Person guardian = new Person(name, phone, new Email("guardian@tutorconnect.com"),
-                new Address("Not provided"), Set.of(new Tag("guardian"), new Tag(guardianId.toString())));
+        Person guardian = new Person(name, phone, new Email(ContactOrder.PLACEHOLDER_GUARDIAN_EMAIL),
+                new Address(ContactOrder.PLACEHOLDER_ADDRESS),
+                Set.of(new Tag("guardian"), new Tag(guardianId.toString())));
         model.addPerson(guardian);
         return new CommandResult("Added guardian " + guardianId + ": " + name);
     }

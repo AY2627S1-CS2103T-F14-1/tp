@@ -22,6 +22,7 @@ public class LinkCommandParser implements Parser<LinkCommand> {
             if (StudentId.isValidStudentId(studentValue) && GuardianId.isValidGuardianId(guardianValue)) {
                 return new LinkCommand(new StudentId(studentValue), new GuardianId(guardianValue));
             }
+            throw new ParseException(LinkCommand.MESSAGE_WRONG_ID_TYPES + "\n" + LinkCommand.MESSAGE_USAGE);
         }
         throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, LinkCommand.MESSAGE_USAGE));
     }

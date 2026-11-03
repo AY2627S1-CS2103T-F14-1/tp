@@ -230,6 +230,7 @@ Furthermore, certain edits can cause TutorConnect to behave unexpectedly (for ex
 2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
 3. **On macOS, if the app is in full-screen mode**, secondary windows such as the Help Window may not appear correctly. Leave full-screen mode before using `help`.
 4. **Phone numbers are checked loosely.** Phone numbers accept only digits (3 to 15 of them). Symbols such as `+` are rejected for now.
+5. **A link cannot be removed on its own yet.** There is no `unlink` command, and `edit` does not change links. If you link the wrong guardian, note the contact's details, `delete` it (which removes its links), then add it again. The re-added contact gets a new ID, because IDs are never reused. An `unlink` command is planned for a future version.
 
 --------------------------------------------------------------------------------------------------------------------
 
