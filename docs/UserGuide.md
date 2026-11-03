@@ -19,11 +19,11 @@ TutorConnect is a **desktop application for tutors to manage student and guardia
 
 1. Copy the file to the folder you want to use as the _home folder_ for TutorConnect.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar TutorConnect-v1.5.jar` (use the name of the file you downloaded).<br>
+1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar TutorConnect-v1.6.jar` (use the name of the file you downloaded).<br>
    A TutorConnect window should appear in a few seconds with an empty contact list.
 
    <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
-   Launch the app from a terminal as shown above, as double-clicking the JAR file may fail on some systems. Use a folder you can write to: TutorConnect saves its data next to the JAR file, so it may fail to start or to save from a write-protected folder.
+   Launch the app from a terminal as shown above, as double-clicking the JAR file may fail on some systems. Use a folder you can write to: TutorConnect saves its data in a `data` folder inside the folder you launch it from, so it may fail to start or to save from a write-protected folder.
    </div>
 
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
@@ -207,7 +207,7 @@ TutorConnect automatically saves your data after every command that changes it. 
 
 ### Editing the data file
 
-TutorConnect data is saved automatically as a JSON file `[JAR file location]/data/tutorconnect.json`.
+TutorConnect data is saved automatically as a JSON file `data/tutorconnect.json`, inside the folder you launched TutorConnect from (the folder containing the JAR file, if you followed the Quick start).
 Advanced users are welcome to update data directly by editing that data file.
 
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
