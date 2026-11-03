@@ -49,21 +49,36 @@ task coverage(type: JacocoReport) {
     }
 }
 
+configurations {
+    macIntelNatives { transitive = false }
+    macArmNatives { transitive = false }
+}
+
 dependencies {
     String jUnitVersion = '5.14.4'
     String javaFxVersion = '17.0.7'
 
+    // For `run` and tests, use the build machine's Mac natives. The Intel ('mac') and Apple Silicon
+    // ('mac-aarch64') libraries share file names, so they cannot both sit on one classpath; the
+    // shadowJar below stores both under natives/ instead and Main picks one at startup.
+    boolean appleSilicon = System.getProperty('os.name').toLowerCase().contains('mac')
+            && System.getProperty('os.arch') == 'aarch64'
+    String macClassifier = appleSilicon ? 'mac-aarch64' : 'mac'
+
+    macIntelNatives "org.openjfx:javafx-graphics:${javaFxVersion}:mac"
+    macArmNatives "org.openjfx:javafx-graphics:${javaFxVersion}:mac-aarch64"
+
     implementation "org.openjfx:javafx-base:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-base:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-base:${javaFxVersion}:${macClassifier}"
     implementation "org.openjfx:javafx-base:${javaFxVersion}:linux"
     implementation "org.openjfx:javafx-controls:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-controls:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-controls:${javaFxVersion}:${macClassifier}"
     implementation "org.openjfx:javafx-controls:${javaFxVersion}:linux"
     implementation "org.openjfx:javafx-fxml:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:${macClassifier}"
     implementation "org.openjfx:javafx-fxml:${javaFxVersion}:linux"
     implementation "org.openjfx:javafx-graphics:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:mac"
+    implementation "org.openjfx:javafx-graphics:${javaFxVersion}:${macClassifier}"
     implementation "org.openjfx:javafx-graphics:${javaFxVersion}:linux"
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.7.0'
@@ -77,6 +92,21 @@ dependencies {
 
 shadowJar {
     archiveFileName = 'addressbook.jar'
+
+    // Keep the single-arch Mac natives off the jar root and ship both sets under natives/ instead.
+    eachFile {
+        if (name.endsWith('.dylib') && relativePath.segments.length == 1) {
+            exclude()
+        }
+    }
+    from({ zipTree(project.configurations.macIntelNatives.singleFile) }) {
+        include 'lib*.dylib'
+        into 'natives/mac'
+    }
+    from({ zipTree(project.configurations.macArmNatives.singleFile) }) {
+        include 'lib*.dylib'
+        into 'natives/mac-aarch64'
+    }
 }
 
 defaultTasks 'clean', 'test'
