@@ -26,8 +26,8 @@ public class MainAppTest {
     public Path temporaryFolder;
 
     @Test
-    public void version_isV15() {
-        assertEquals("V1.5", MainApp.VERSION);
+    public void version_isV16() {
+        assertEquals("V1.6", MainApp.VERSION);
     }
 
     @Test
