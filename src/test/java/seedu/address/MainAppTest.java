@@ -69,6 +69,18 @@ public class MainAppTest {
     }
 
     @Test
+    public void initModelManager_nullPersonInData_backsUpFileAndStartsEmpty() throws IOException {
+        Path dataFile = temporaryFolder.resolve("tutorconnect.json");
+        String content = "{\"persons\":[null],\"guardianLinks\":[],\"nextStudentNumber\":1,\"nextGuardianNumber\":1}";
+        Files.writeString(dataFile, content);
+
+        assertEquals(0, new MainApp().initModelManager(storageFor(dataFile), new UserPrefs())
+                .getAddressBook().getPersonList().size());
+
+        assertEquals(content, Files.readString(temporaryFolder.resolve("tutorconnect.json.bak")));
+    }
+
+    @Test
     public void backUpUnreadableDataFile_missingFile_returnsEmpty() {
         assertTrue(MainApp.backUpUnreadableDataFile(temporaryFolder.resolve("missing.json")).isEmpty());
     }

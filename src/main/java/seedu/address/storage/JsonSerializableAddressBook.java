@@ -24,6 +24,7 @@ import seedu.address.model.student.StudentId;
 @JsonRootName(value = "addressbook")
 class JsonSerializableAddressBook {
 
+    public static final String MESSAGE_NULL_ENTRY = "The persons or guardian links list contains a null entry.";
     public static final String MESSAGE_DUPLICATE_PERSON = "Persons list contains duplicate person(s).";
     public static final String MESSAGE_DUPLICATE_CONTACT_ID = "Persons list contains duplicate contact ID(s).";
     public static final String MESSAGE_INVALID_CONTACT_ID = "A person has more than one TutorConnect contact ID.";
@@ -78,6 +79,9 @@ class JsonSerializableAddressBook {
     public AddressBook toModelType() throws IllegalValueException {
         AddressBook addressBook = new AddressBook();
         for (JsonAdaptedPerson jsonAdaptedPerson : persons) {
+            if (jsonAdaptedPerson == null) {
+                throw new IllegalValueException(MESSAGE_NULL_ENTRY);
+            }
             Person person = jsonAdaptedPerson.toModelType();
             if (addressBook.hasPerson(person)) {
                 throw new IllegalValueException(MESSAGE_DUPLICATE_PERSON);
@@ -86,6 +90,9 @@ class JsonSerializableAddressBook {
         }
         List<GuardianLink> links = new ArrayList<>();
         for (JsonAdaptedGuardianLink jsonLink : guardianLinks) {
+            if (jsonLink == null) {
+                throw new IllegalValueException(MESSAGE_NULL_ENTRY);
+            }
             links.add(jsonLink.toModelType());
         }
         validateTutorConnectData(addressBook.getPersonList(), links);

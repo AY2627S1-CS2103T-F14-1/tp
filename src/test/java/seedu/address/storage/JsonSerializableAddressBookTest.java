@@ -49,6 +49,22 @@ public class JsonSerializableAddressBookTest {
     }
 
     @Test
+    public void toModelType_nullPerson_throwsIllegalValueException() throws Exception {
+        JsonSerializableAddressBook dataFromFile = readTutorConnectData("[null]", "[]", 1, 1);
+
+        assertThrows(IllegalValueException.class, JsonSerializableAddressBook.MESSAGE_NULL_ENTRY,
+                dataFromFile::toModelType);
+    }
+
+    @Test
+    public void toModelType_nullGuardianLink_throwsIllegalValueException() throws Exception {
+        JsonSerializableAddressBook dataFromFile = readTutorConnectData(TUTOR_CONNECT_PERSONS, "[null]", 2, 2);
+
+        assertThrows(IllegalValueException.class, JsonSerializableAddressBook.MESSAGE_NULL_ENTRY,
+                dataFromFile::toModelType);
+    }
+
+    @Test
     public void toModelType_duplicateContactId_throwsIllegalValueException() throws Exception {
         JsonSerializableAddressBook dataFromFile = readTutorConnectData("""
                 [{"name":"Alex Tan","phone":"91234567","email":"a@example.com","address":"One","tags":["S1"]},
