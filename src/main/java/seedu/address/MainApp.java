@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.exceptions.DataLoadingException;
@@ -20,6 +22,7 @@ import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.ReadOnlyUserPrefs;
 import seedu.address.model.UserPrefs;
+import seedu.address.storage.DataFileLock;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
 import seedu.address.storage.Storage;
@@ -43,10 +46,19 @@ public class MainApp extends Application {
     protected Storage storage;
     protected Model model;
 
+    private DataFileLock dataFileLock;
+    private boolean isAnotherInstanceRunning;
+
     @Override
     public void init() throws Exception {
         logger.info("=============================[ Initializing TutorConnect ]==========================");
         super.init();
+
+        if (!lockDataFile(ADDRESS_BOOK_FILE_PATH)) {
+            isAnotherInstanceRunning = true;
+            logger.warning("Another TutorConnect is already using " + ADDRESS_BOOK_FILE_PATH + ". Exiting.");
+            return;
+        }
 
         JsonUserPrefsStorage userPrefsStorage = new JsonUserPrefsStorage(USER_PREFS_FILE_PATH);
         UserPrefs userPrefs = initPrefs(userPrefsStorage);
@@ -58,6 +70,25 @@ public class MainApp extends Application {
         logic = new LogicManager(model, storage);
 
         ui = new UiManager(logic, storage.getAddressBookFilePath());
+    }
+
+    /**
+     * Locks {@code dataFile} for this TutorConnect so that a second one started on the same file cannot save
+     * over this one's changes.
+     *
+     * @return false if another TutorConnect already holds the lock. True if the lock was taken, or if it could not
+     *         be taken because of a file error, in which case TutorConnect starts without the protection.
+     */
+    private boolean lockDataFile(Path dataFile) {
+        try {
+            Optional<DataFileLock> lock = DataFileLock.tryAcquire(dataFile);
+            lock.ifPresent(acquired -> dataFileLock = acquired);
+            return lock.isPresent();
+        } catch (IOException e) {
+            logger.warning("Could not lock the data file, so a second TutorConnect will not be detected: "
+                    + StringUtil.getDetails(e));
+            return true;
+        }
     }
 
     /**
@@ -153,17 +184,40 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        if (isAnotherInstanceRunning) {
+            showAlreadyRunningDialog();
+            Platform.exit();
+            return;
+        }
         logger.info("Starting TutorConnect " + MainApp.VERSION);
         ui.start(primaryStage);
+    }
+
+    private void showAlreadyRunningDialog() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("TutorConnect is already running");
+        alert.setHeaderText("TutorConnect is already open on this data file.");
+        alert.setContentText("Two windows saving to the same file would overwrite each other's changes. "
+                + "Use the window that is already open, or close it and start TutorConnect again.");
+        alert.showAndWait();
     }
 
     @Override
     public void stop() {
         logger.info("============================ [ Stopping TutorConnect ] =============================");
-        try {
-            storage.saveUserPrefs(model.getUserPrefs());
-        } catch (IOException e) {
-            logger.severe("Failed to save preferences " + StringUtil.getDetails(e));
+        if (model != null) {
+            try {
+                storage.saveUserPrefs(model.getUserPrefs());
+            } catch (IOException e) {
+                logger.severe("Failed to save preferences " + StringUtil.getDetails(e));
+            }
+        }
+        if (dataFileLock != null) {
+            try {
+                dataFileLock.close();
+            } catch (IOException e) {
+                logger.warning("Failed to release the data file lock " + StringUtil.getDetails(e));
+            }
         }
     }
 }
