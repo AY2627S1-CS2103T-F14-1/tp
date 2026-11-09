@@ -116,6 +116,25 @@ public class ArgumentTokenizerTest {
     }
 
     @Test
+    public void tokenize_nameConnectorLooksLikePrefix_connectorStaysInValue() {
+        Prefix nameSlash = new Prefix("n/");
+        Prefix addressSlash = new Prefix("a/");
+
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize("1 n/Ravi a/l Kumar", nameSlash, addressSlash);
+        assertArgumentPresent(argMultimap, nameSlash, "Ravi a/l Kumar");
+        assertArgumentAbsent(argMultimap, addressSlash);
+
+        // a later real prefix is still found
+        argMultimap = ArgumentTokenizer.tokenize("1 n/Ravi A/P Kumar a/Blk 1", nameSlash, addressSlash);
+        assertArgumentPresent(argMultimap, nameSlash, "Ravi A/P Kumar");
+        assertArgumentPresent(argMultimap, addressSlash, "Blk 1");
+
+        // not a connector: followed by more letters
+        argMultimap = ArgumentTokenizer.tokenize("1 n/Ravi a/lane", nameSlash, addressSlash);
+        assertArgumentPresent(argMultimap, addressSlash, "lane");
+    }
+
+    @Test
     public void tokenize_multipleArgumentsWithRepeats() {
         // Two arguments repeated, some have empty values
         String argsString = "SomePreambleString -t dashT-Value ^Q ^Q -t another dashT value p/ pSlash value -t";
