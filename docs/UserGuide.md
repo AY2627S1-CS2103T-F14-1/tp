@@ -86,6 +86,7 @@ Adds a student and assigns the next permanent student ID (`S1`, `S2`, …).
 Format: `add-student n/NAME p/PHONE_NUMBER`
 
 * `NAME` can contain letters (including accented and non-English letters such as `José` or `陈小明`), digits, spaces, apostrophes (`'`), hyphens (`-`), full stops (`.`) and slashes (`/`), up to 100 characters, and must start with a letter or digit. For example, `O'Brien`, `Mary-Jane` and `Tan Wei Ming s/o Tan Ah Kow` are accepted.
+* The name connectors `s/o`, `d/o`, `a/l`, `a/p`, `w/o` and `c/o` (in any letter case) are accepted when they stand alone as a word, as in `Ravi a/l Kumar`. They are read as part of the name, even in `edit`, where `a/` would otherwise start an address. Other slashes after a space, such as in `Tan Ah/Kow`, are read as the start of a parameter and are rejected.
 * `PHONE_NUMBER` can contain digits only, between 3 and 15 digits long.
 
 Example: `add-student n/Alex Tan p/91234567`
@@ -204,6 +205,7 @@ Format: `exit`
 ### Saving the data
 
 TutorConnect automatically saves your data after every command that changes it. You do not need to save manually. If the data cannot be saved (for example because the folder is write-protected or the disk is full), TutorConnect shows an error and undoes that command, so what you see always matches what is on disk.
+
 
 ### Editing the data file
 

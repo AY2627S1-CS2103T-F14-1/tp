@@ -205,4 +205,30 @@ public class EditCommandParserTest {
 
         assertParseSuccess(parser, userInput, expectedCommand);
     }
+
+    @Test
+    public void parse_nameWithConnectorThatLooksLikeAddressPrefix_success() {
+        Index targetIndex = INDEX_FIRST_PERSON;
+
+        // "a/l" and "a/p" are part of the name, not the address prefix
+        assertParseSuccess(parser, targetIndex.getOneBased() + " n/Ravi a/l Kumar",
+                new EditCommand(targetIndex, new EditPersonDescriptorBuilder().withName("Ravi a/l Kumar").build()));
+        assertParseSuccess(parser, targetIndex.getOneBased() + " n/Latha A/P Kumar p/91234567",
+                new EditCommand(targetIndex, new EditPersonDescriptorBuilder()
+                        .withName("Latha A/P Kumar").withPhone("91234567").build()));
+
+        // a real address after the connector is still read as the address
+        assertParseSuccess(parser, targetIndex.getOneBased() + " n/Ravi a/l Kumar a/10 Orchard Road",
+                new EditCommand(targetIndex, new EditPersonDescriptorBuilder()
+                        .withName("Ravi a/l Kumar").withAddress("10 Orchard Road").build()));
+    }
+
+    @Test
+    public void parse_addressStartingWithLetterAfterPrefix_success() {
+        Index targetIndex = INDEX_FIRST_PERSON;
+
+        // "a/lane" is not a connector, so it is still the address prefix followed by "lane"
+        assertParseSuccess(parser, targetIndex.getOneBased() + " a/lane 5",
+                new EditCommand(targetIndex, new EditPersonDescriptorBuilder().withAddress("lane 5").build()));
+    }
 }

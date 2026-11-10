@@ -59,6 +59,8 @@ public class ParserUtilTest {
         assertThrows(ParseException.class, () -> ParserUtil.verifyNoUnknownPrefix("91234567 x/foo", "usage"));
         assertThrows(ParseException.class, () -> ParserUtil.verifyNoUnknownPrefix("Alex Tan  zz/bar baz", "usage"));
         assertThrows(ParseException.class, () -> ParserUtil.verifyNoUnknownPrefix("Alex s/other", "usage"));
+        assertThrows(ParseException.class, () -> ParserUtil.verifyNoUnknownPrefix("Ravi a/lane", "usage"));
+        assertThrows(ParseException.class, () -> ParserUtil.verifyNoUnknownPrefix("Ravi a/x Kumar", "usage"));
     }
 
     @Test
@@ -68,6 +70,11 @@ public class ParserUtilTest {
         ParserUtil.verifyNoUnknownPrefix("Blk 1/2 Street", "usage"); // slash not preceded by letters only
         ParserUtil.verifyNoUnknownPrefix("Tan Wei Ming s/o Tan Ah Kow", "usage"); // son of
         ParserUtil.verifyNoUnknownPrefix("Siti D/O Rahman", "usage"); // daughter of, any case
+        ParserUtil.verifyNoUnknownPrefix("Ravi a/l Kumar", "usage"); // anak lelaki
+        ParserUtil.verifyNoUnknownPrefix("Latha A/P Kumar", "usage"); // anak perempuan
+        ParserUtil.verifyNoUnknownPrefix("Mary w/o John", "usage"); // wife of
+        ParserUtil.verifyNoUnknownPrefix("Ravi c/o Kumar", "usage"); // care of
+        ParserUtil.verifyNoUnknownPrefix("Ravi a/l", "usage"); // connector at the end of the value
     }
 
     @Test

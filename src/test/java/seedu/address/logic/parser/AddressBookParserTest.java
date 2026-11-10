@@ -130,6 +130,14 @@ public class AddressBookParserTest {
     }
 
     @Test
+    public void parseCommand_nameWithAnakConnectors_success() throws Exception {
+        assertTrue(parser.parseCommand("add-student n/Ravi a/l Kumar p/91234567") instanceof AddStudentCommand);
+        assertTrue(parser.parseCommand("add-guardian n/Latha a/p Kumar p/92345678") instanceof AddGuardianCommand);
+        assertTrue(parser.parseCommand("add-guardian n/Mary w/o John p/92345678") instanceof AddGuardianCommand);
+        assertTrue(parser.parseCommand("edit S1 n/Ravi a/l Kumar") instanceof EditCommand);
+    }
+
+    @Test
     public void parseCommand_commandWordInUpperCase_success() throws Exception {
         assertTrue(parser.parseCommand("HELP") instanceof HelpCommand);
         assertTrue(parser.parseCommand("List") instanceof ListCommand);

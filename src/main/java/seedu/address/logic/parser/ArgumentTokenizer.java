@@ -71,6 +71,10 @@ public class ArgumentTokenizer {
      */
     private static int findPrefixPosition(String argsString, String prefix, int fromIndex) {
         int prefixIndex = argsString.indexOf(" " + prefix, fromIndex);
+        while (prefixIndex != -1 && NameConnectors.startsAt(argsString, prefixIndex + 1)) {
+            // A name connector such as "a/l" in "n/Ravi a/l Kumar" is part of the value, not a prefix.
+            prefixIndex = argsString.indexOf(" " + prefix, prefixIndex + 1);
+        }
         return prefixIndex == -1 ? -1
                 : prefixIndex + 1; // +1 as offset for whitespace
     }
