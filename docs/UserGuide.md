@@ -206,6 +206,7 @@ Format: `exit`
 
 TutorConnect automatically saves your data after every command that changes it. You do not need to save manually. If the data cannot be saved (for example because the folder is write-protected or the disk is full), TutorConnect shows an error and undoes that command, so what you see always matches what is on disk.
 
+Only one TutorConnect can use a data file at a time, because two windows saving to the same file would overwrite each other's changes. If you start TutorConnect again from a folder where it is already open, it shows a message and exits; keep using the window that is already open. TutorConnect keeps a small `tutorconnect.json.lock` file beside the data file for this. It is safe to ignore, and to delete when TutorConnect is closed.
 
 ### Editing the data file
 

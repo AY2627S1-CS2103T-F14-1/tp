@@ -145,6 +145,7 @@ The `Storage` component,
 * can save both address book data and user preference data in JSON format, and read them back into corresponding objects.
 * is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonAddressBookStorage` and `JsonUserPrefsStorage` (one class per data file).
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
+* provides `DataFileLock`, which `MainApp` uses to hold an OS file lock on `tutorconnect.json.lock` beside the data file while TutorConnect runs. A second TutorConnect on the same data file fails to take the lock, shows an alert and exits, so two windows never save over each other. The lock is released by the OS if the process dies, and if the lock file cannot be created, TutorConnect starts without the protection.
 
 #### What TutorConnect saves
 
